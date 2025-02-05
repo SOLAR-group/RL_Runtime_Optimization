@@ -17,7 +17,7 @@ bash experiments/run.sh &
 
 All the log files should go in the `experiments/results` folder.
 
-### Produce graphs and metrics:
+### Produce graphs and metrics
 
 Change the `RESULT_DIR` variable in the `experiments/process_results/process_official_final.ipynb` notebook to point your results folder (e.g, `experiments/results`). Then run all the notebook cells. The metrics and graphs should be computed automatically.
 
