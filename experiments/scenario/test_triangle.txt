@@ -1,0 +1,63 @@
+[magpie]
+local_original_copy = True
+
+[srcml]
+rename =
+focus = block break continue decl_stmt do expr_stmt for goto if return switch while
+internodes = block
+process_pseudo_blocks = True
+process_literals = False
+process_operators = False
+
+[software]
+path = examples/code/triangle-cpp_slow
+target_files =
+    triangle.cpp.xml
+fitness = time
+
+setup_cmd = ./setup.sh
+compile_cmd = ./compile.sh
+test_cmd = ./build/test_triangle
+run_cmd = ./build/run_triangle
+run_timeout = 1
+
+[search]
+warmup = 1
+max_steps = 100
+possible_edits =
+    BreakDeletion
+    ContinueDeletion
+    DeclStmtDeletion
+    DoDeletion
+    ExprStmtDeletion
+    ForDeletion
+    GotoDeletion
+    IfDeletion
+    ReturnDeletion
+    SwitchDeletion
+    WhileDeletion
+    BreakReplacement
+    ContinueReplacement
+    DeclStmtReplacement
+    DoReplacement
+    ExprStmtReplacement
+    ForReplacement
+    GotoReplacement
+    IfReplacement
+    ReturnReplacement
+    SwitchReplacement
+    WhileReplacement
+    BreakInsertion
+    ContinueInsertion
+    DeclStmtInsertion
+    DoInsertion
+    ExprStmtInsertion
+    ForInsertion
+    GotoInsertion
+    IfInsertion
+    ReturnInsertion
+    SwitchInsertion
+    WhileInsertion
+
+[search.ls]
+max_neighbours = 20

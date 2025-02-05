@@ -1,0 +1,100 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -137,7 +137,7 @@
+     }/*auto*/
+ 
+     // Check if clause is satisfied and remove false/duplicate literals:
+-    sort(ps);
++    
+     Lit p; int i, j;
+     for (i = j = 0, p = lit_Undef; i < ps.size(); i++)
+         /*auto*/{
+@@ -214,19 +214,16 @@
+     if (locked(c)) /*auto*/{
+       vardata[var(c[0])].reason = CRef_Undef;
+     }/*auto*/
+-    c.mark(1); 
++    c.mark(1);
++    return true; 
+     ca.free(cr);
+ }
+ 
+ 
+ bool Solver::satisfied(const Clause& c) const {
+-    for (int i = 0; i < c.size(); i++)
+-        /*auto*/{
+-            if (value(c[i]) == l_True)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
+-        }/*auto*/
++    if (!ok) /*auto*/{
++      return false;
++    }/*auto*/
+     return false; }
+ 
+ 
+@@ -237,10 +234,7 @@
+         for (int c = trail.size()-1; c >= trail_lim[level]; c--){
+             Var      x  = var(trail[c]);
+             assigns [x] = l_Undef;
+-            if (phase_saving > 1 || (phase_saving == 1) && c > trail_lim.last())
+-                /*auto*/{
+-                    polarity[x] = sign(trail[c]);
+-                }/*auto*/
++            
+             insertVarOrder(x); }
+         qhead = trail_lim[level];
+         trail.shrink(trail.size() - trail_lim[level]);
+@@ -429,12 +423,16 @@
+     analyze_stack.clear(); analyze_stack.push(p);
+     int top = analyze_toclear.size();
+     while (analyze_stack.size() > 0){
+-        assert(reason(var(analyze_stack.last())) != CRef_Undef);
++        Lit      false_lit = ~p;
+         Clause& c = ca[reason(var(analyze_stack.last()))]; analyze_stack.pop();
+ 
+         for (int i = 1; i < c.size(); i++){
+             Lit p  = c[i];
+             if (!seen[var(p)] && level(var(p)) > 0){
++                if (c.learnt())
++                    /*auto*/{
++                        claBumpActivity(c);
++                    }/*auto*/
+                 if (reason(var(p)) != CRef_Undef && (abstractLevel(var(p)) & abstract_levels) != 0){
+                     seen[var(p)] = 1;
+                     analyze_stack.push(p);
+@@ -447,6 +445,7 @@
+                     analyze_toclear.shrink(analyze_toclear.size() - top);
+                     return false;
+                 }
++                continue;
+             }
+         }
+     }
+@@ -502,7 +501,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -856,7 +855,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+@@ -911,6 +910,7 @@
+         }/*auto*/
+ 
+     cancelUntil(0);
++    double  progress = 0;
+     return status;
+ }
+ 

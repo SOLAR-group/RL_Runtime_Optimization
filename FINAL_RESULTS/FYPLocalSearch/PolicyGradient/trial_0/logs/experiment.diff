@@ -1,0 +1,83 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -215,7 +215,7 @@
+       vardata[var(c[0])].reason = CRef_Undef;
+     }/*auto*/
+     c.mark(1); 
+-    ca.free(cr);
++    
+ }
+ 
+ 
+@@ -237,10 +237,7 @@
+         for (int c = trail.size()-1; c >= trail_lim[level]; c--){
+             Var      x  = var(trail[c]);
+             assigns [x] = l_Undef;
+-            if (phase_saving > 1 || (phase_saving == 1) && c > trail_lim.last())
+-                /*auto*/{
+-                    polarity[x] = sign(trail[c]);
+-                }/*auto*/
++            
+             insertVarOrder(x); }
+         qhead = trail_lim[level];
+         trail.shrink(trail.size() - trail_lim[level]);
+@@ -313,6 +310,7 @@
+ 
+         if (c.learnt())
+             /*auto*/{
++                static IntOption     opt_ccmin_mode        (_cat, "ccmin-mode",  "Controls conflict clause minimization (0=none, 1=basic, 2=deep)", 2, IntRange(0, 2));
+                 claBumpActivity(c);
+             }/*auto*/
+ 
+@@ -426,7 +424,7 @@
+ // visiting literals at levels that cannot be removed later.
+ bool Solver::litRedundant(Lit p, uint32_t abstract_levels)
+ {
+-    analyze_stack.clear(); analyze_stack.push(p);
++     analyze_stack.push(p);
+     int top = analyze_toclear.size();
+     while (analyze_stack.size() > 0){
+         assert(reason(var(analyze_stack.last())) != CRef_Undef);
+@@ -436,9 +434,10 @@
+             Lit p  = c[i];
+             if (!seen[var(p)] && level(var(p)) > 0){
+                 if (reason(var(p)) != CRef_Undef && (abstractLevel(var(p)) & abstract_levels) != 0){
+-                    seen[var(p)] = 1;
++                    
+                     analyze_stack.push(p);
+                     analyze_toclear.push(p);
++                    break;
+                 }else{
+                     for (int j = top; j < analyze_toclear.size(); j++)
+                         /*auto*/{
+@@ -502,7 +501,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -738,7 +737,7 @@
+                 CRef cr = ca.alloc(learnt_clause, true);
+                 learnts.push(cr);
+                 attachClause(cr);
+-                claBumpActivity(ca[cr]);
++                
+                 uncheckedEnqueue(learnt_clause[0], cr);
+             }
+ 
+@@ -761,11 +760,7 @@
+ 
+         }else{
+             // NO CONFLICT
+-            if (nof_conflicts >= 0 && conflictC >= nof_conflicts || !withinBudget()){
+-                // Reached bound on number of conflicts:
+-                progress_estimate = progressEstimate();
+-                cancelUntil(0);
+-                return l_Undef; }
++            int i, j;
+ 
+             // Simplify the set of problem clauses:
+             if (decisionLevel() == 0 && !simplify())

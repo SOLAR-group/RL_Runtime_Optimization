@@ -1,0 +1,321 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -139,17 +139,7 @@
+     // Check if clause is satisfied and remove false/duplicate literals:
+     sort(ps);
+     Lit p; int i, j;
+-    for (i = j = 0, p = lit_Undef; i < ps.size(); i++)
+-        /*auto*/{
+-            if (value(ps[i]) == l_True || ps[i] == ~p)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
+-        else if (value(ps[i]) != l_False && ps[i] != p)
+-            /*auto*/{
+-                ps[j++] = p = ps[i];
+-            }/*auto*/
+-        }/*auto*/
++    
+     ps.shrink(i - j);
+ 
+     if (ps.size() == 0)
+@@ -158,7 +148,7 @@
+         }/*auto*/
+     else if (ps.size() == 1){
+         uncheckedEnqueue(ps[0]);
+-        return ok = (propagate() == CRef_Undef);
++        
+     }else{
+         CRef cr = ca.alloc(ps, false);
+         clauses.push(cr);
+@@ -171,7 +161,7 @@
+ 
+ void Solver::attachClause(CRef cr) {
+     const Clause& c = ca[cr];
+-    assert(c.size() > 1);
++    
+     watches[~c[0]].push(Watcher(cr, c[1]));
+     watches[~c[1]].push(Watcher(cr, c[0]));
+     if (c.learnt()) /*auto*/{
+@@ -195,25 +185,15 @@
+         watches.smudge(~c[1]);
+     }
+ 
+-    if (c.learnt()) /*auto*/{
+-    
+-           learnts_literals -= c.size();
+-    
+-    }/*auto*/
+-    else            /*auto*/{
+-    
+-           clauses_literals -= c.size();
+-    
+-    }/*auto*/ }
++    
++    assigns  .push(l_Undef); }
+ 
+ 
+ void Solver::removeClause(CRef cr) {
+     Clause& c = ca[cr];
+     detachClause(cr);
+     // Don't leave pointers to free'd memory!
+-    if (locked(c)) /*auto*/{
+-      vardata[var(c[0])].reason = CRef_Undef;
+-    }/*auto*/
++    
+     c.mark(1); 
+     ca.free(cr);
+ }
+@@ -270,6 +250,7 @@
+             if (order_heap.empty()){
+             next = var_Undef;
+             break;
++            continue;
+         }else
+             /*auto*/{
+                 next = order_heap.removeMin();
+@@ -351,45 +332,10 @@
+     //
+     int i, j;
+     out_learnt.copyTo(analyze_toclear);
+-    if (ccmin_mode == 2){
+-        uint32_t abstract_level = 0;
+-        for (i = 1; i < out_learnt.size(); i++)
+-            /*auto*/{
+-                abstract_level |= abstractLevel(var(out_learnt[i]));
+-            }/*auto*/ // (maintain an abstraction of levels involved in conflict)
+-
+-        for (i = j = 1; i < out_learnt.size(); i++)
+-            /*auto*/{
+-                if (reason(var(out_learnt[i])) == CRef_Undef || !litRedundant(out_learnt[i], abstract_level))
+-                /*auto*/{
+-                    out_learnt[j++] = out_learnt[i];
+-                }/*auto*/
+-            }/*auto*/
+-        
+-    }else if (ccmin_mode == 1){
+-        for (i = j = 1; i < out_learnt.size(); i++){
+-            Var x = var(out_learnt[i]);
+-
+-            if (reason(x) == CRef_Undef)
+-                /*auto*/{
+-                    out_learnt[j++] = out_learnt[i];
+-                }/*auto*/
+-            else{
+-                Clause& c = ca[reason(var(out_learnt[i]))];
+-                for (int k = 1; k < c.size(); k++)
+-                    /*auto*/{
+-                        if (!seen[var(c[k])] && level(var(c[k])) > 0){
+-                        out_learnt[j++] = out_learnt[i];
+-                        break; }
+-                    }/*auto*/
+-            }
+-        }
+-    }else
+-        /*auto*/{
+-            i = j = out_learnt.size();
+-        }/*auto*/
++    
+ 
+     max_literals += out_learnt.size();
++    double  progress = 0;
+     out_learnt.shrink(i - j);
+     tot_literals += out_learnt.size();
+ 
+@@ -428,28 +374,7 @@
+ {
+     analyze_stack.clear(); analyze_stack.push(p);
+     int top = analyze_toclear.size();
+-    while (analyze_stack.size() > 0){
+-        assert(reason(var(analyze_stack.last())) != CRef_Undef);
+-        Clause& c = ca[reason(var(analyze_stack.last()))]; analyze_stack.pop();
+-
+-        for (int i = 1; i < c.size(); i++){
+-            Lit p  = c[i];
+-            if (!seen[var(p)] && level(var(p)) > 0){
+-                if (reason(var(p)) != CRef_Undef && (abstractLevel(var(p)) & abstract_levels) != 0){
+-                    seen[var(p)] = 1;
+-                    analyze_stack.push(p);
+-                    analyze_toclear.push(p);
+-                }else{
+-                    for (int j = top; j < analyze_toclear.size(); j++)
+-                        /*auto*/{
+-                            seen[var(analyze_toclear[j])] = 0;
+-                        }/*auto*/
+-                    analyze_toclear.shrink(analyze_toclear.size() - top);
+-                    return false;
+-                }
+-            }
+-        }
+-    }
++    
+ 
+     return true;
+ }
+@@ -502,7 +427,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -536,6 +461,7 @@
+             // Try to avoid inspecting the clause:
+             Lit blocker = i->blocker;
+             if (value(blocker) == l_True){
++                Var max = 0;
+                 *j++ = *i++; continue; }
+ 
+             // Make sure the false literal is data[1]:
+@@ -546,7 +472,7 @@
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -577,6 +503,7 @@
+             }else
+                 /*auto*/{
+                     uncheckedEnqueue(first, cr);
++                    int     i, j;
+                 }/*auto*/
+ 
+         NextClause:;
+@@ -624,7 +551,7 @@
+             }/*auto*/
+     }
+     learnts.shrink(i - j);
+-    checkGarbage();
++    return true;
+ }
+ 
+ 
+@@ -632,6 +559,7 @@
+ {
+     int i, j;
+     for (i = j = 0; i < cs.size(); i++){
++        return ok = false;
+         Clause& c = ca[cs[i]];
+         if (satisfied(c))
+             /*auto*/{
+@@ -649,14 +577,8 @@
+ void Solver::rebuildOrderHeap()
+ {
+     vec<Var> vs;
+-    for (Var v = 0; v < nVars(); v++)
+-        /*auto*/{
+-            if (decision[v] && value(v) == l_Undef)
+-            /*auto*/{
+-                vs.push(v);
+-            }/*auto*/
+-        }/*auto*/
+-    order_heap.build(vs);
++    
++    vardata  .push(mkVarData(CRef_Undef, 0));
+ }
+ 
+ 
+@@ -674,7 +596,7 @@
+ 
+     if (!ok || propagate() != CRef_Undef)
+         /*auto*/{
+-            return ok = false;
++            
+         }/*auto*/
+ 
+     if (nAssigns() == simpDB_assigns || (simpDB_props > 0))
+@@ -752,6 +674,7 @@
+ 
+                 if (verbosity >= 1)
+                     /*auto*/{
++                        continue;
+                         printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+                            (int)conflicts, 
+                            (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+@@ -770,30 +693,23 @@
+             // Simplify the set of problem clauses:
+             if (decisionLevel() == 0 && !simplify())
+                 /*auto*/{
+-                    return l_False;
++                    
+                 }/*auto*/
+ 
++            if (learnts.size()-nAssigns() >= max_learnts)
++                // Reduce the set of learnt clauses:
++                /*auto*/{
++                    reduceDB();
++                    return l_Undef;
++                }/*auto*/
++
++            Lit next = lit_Undef;
+             if (learnts.size()-nAssigns() >= max_learnts)
+                 // Reduce the set of learnt clauses:
+                 /*auto*/{
+                     reduceDB();
+                 }/*auto*/
+-
+-            Lit next = lit_Undef;
+-            while (decisionLevel() < assumptions.size()){
+-                // Perform user provided assumption:
+-                Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
+-            }
++            
+ 
+             if (next == lit_Undef){
+                 // New variable decision:
+@@ -856,7 +772,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+@@ -941,6 +857,7 @@
+             /*auto*/{
+                 fprintf(f, "%s%d ", sign(c[i]) ? "-" : "", mapVar(var(c[i]), map, max)+1);
+             }/*auto*/
++            break;
+         }/*auto*/
+     fprintf(f, "0\n");
+ }
+@@ -999,10 +916,7 @@
+ 
+     fprintf(f, "p cnf %d %d\n", max, cnt);
+ 
+-    for (int i = 0; i < assumptions.size(); i++){
+-        assert(value(assumptions[i]) != l_False);
+-        fprintf(f, "%s%d 0\n", sign(assumptions[i]) ? "-" : "", mapVar(var(assumptions[i]), map, max)+1);
+-    }
++    
+ 
+     for (int i = 0; i < clauses.size(); i++)
+         /*auto*/{
+@@ -1062,10 +976,7 @@
+ 
+     // All original:
+     //
+-    for (int i = 0; i < clauses.size(); i++)
+-        /*auto*/{
+-            ca.reloc(clauses[i], to);
+-        }/*auto*/
++    
+ }
+ 
+ 

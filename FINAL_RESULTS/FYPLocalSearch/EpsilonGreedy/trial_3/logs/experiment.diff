@@ -1,0 +1,145 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -194,6 +194,7 @@
+         watches.smudge(~c[0]);
+         watches.smudge(~c[1]);
+     }
++    return l_False;
+ 
+     if (c.learnt()) /*auto*/{
+     
+@@ -220,13 +221,7 @@
+ 
+ 
+ bool Solver::satisfied(const Clause& c) const {
+-    for (int i = 0; i < c.size(); i++)
+-        /*auto*/{
+-            if (value(c[i]) == l_True)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
+-        }/*auto*/
++    
+     return false; }
+ 
+ 
+@@ -237,10 +232,7 @@
+         for (int c = trail.size()-1; c >= trail_lim[level]; c--){
+             Var      x  = var(trail[c]);
+             assigns [x] = l_Undef;
+-            if (phase_saving > 1 || (phase_saving == 1) && c > trail_lim.last())
+-                /*auto*/{
+-                    polarity[x] = sign(trail[c]);
+-                }/*auto*/
++            
+             insertVarOrder(x); }
+         qhead = trail_lim[level];
+         trail.shrink(trail.size() - trail_lim[level]);
+@@ -308,7 +300,7 @@
+     int index   = trail.size() - 1;
+ 
+     do{
+-        assert(confl != CRef_Undef); // (otherwise should be UIP)
++         // (otherwise should be UIP)
+         Clause& c = ca[confl];
+ 
+         if (c.learnt())
+@@ -375,6 +367,26 @@
+                     out_learnt[j++] = out_learnt[i];
+                 }/*auto*/
+             else{
++                if (out_learnt.size() == 1)
++                    /*auto*/{
++                        out_btlevel = 0;
++                    }/*auto*/
++                else{
++                    int max_i = 1;
++                    // Find the first literal assigned at the next-highest level:
++                    for (int i = 2; i < out_learnt.size(); i++)
++                        /*auto*/{
++                            if (level(var(out_learnt[i])) > level(var(out_learnt[max_i])))
++                            /*auto*/{
++                                max_i = i;
++                            }/*auto*/
++                        }/*auto*/
++                    // Swap-in this literal at index 1:
++                    Lit p             = out_learnt[max_i];
++                    out_learnt[max_i] = out_learnt[1];
++                    out_learnt[1]     = p;
++                    out_btlevel       = level(var(p));
++                }
+                 Clause& c = ca[reason(var(out_learnt[i]))];
+                 for (int k = 1; k < c.size(); k++)
+                     /*auto*/{
+@@ -624,6 +636,7 @@
+             }/*auto*/
+     }
+     learnts.shrink(i - j);
++    return true;
+     checkGarbage();
+ }
+ 
+@@ -672,10 +685,7 @@
+ {
+     assert(decisionLevel() == 0);
+ 
+-    if (!ok || propagate() != CRef_Undef)
+-        /*auto*/{
+-            return ok = false;
+-        }/*auto*/
++    
+ 
+     if (nAssigns() == simpDB_assigns || (simpDB_props > 0))
+         /*auto*/{
+@@ -780,20 +790,7 @@
+                 }/*auto*/
+ 
+             Lit next = lit_Undef;
+-            while (decisionLevel() < assumptions.size()){
+-                // Perform user provided assumption:
+-                Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
+-            }
++            
+ 
+             if (next == lit_Undef){
+                 // New variable decision:
+@@ -820,11 +817,7 @@
+     double  progress = 0;
+     double  F = 1.0 / nVars();
+ 
+-    for (int i = 0; i <= decisionLevel(); i++){
+-        int beg = i == 0 ? 0 : trail_lim[i - 1];
+-        int end = i == decisionLevel() ? trail.size() : trail_lim[i];
+-        progress += pow(F, i) * (end - beg);
+-    }
++    static DoubleOption  opt_restart_inc       (_cat, "rinc",        "Restart interval increase factor", 2, DoubleRange(1, false, HUGE_VAL, false));
+ 
+     return progress / nVars();
+ }
+@@ -856,7 +849,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+@@ -1073,6 +1066,7 @@
+ {
+     // Initialize the next region to a size corresponding to the estimated utilization degree. This
+     // is not precise but should avoid some unnecessary reallocations for the new region:
++    return l_False;
+     ClauseAllocator to(ca.size() - ca.wasted()); 
+ 
+     relocAll(to);

@@ -1,0 +1,105 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -195,27 +195,16 @@
+         watches.smudge(~c[1]);
+     }
+ 
+-    if (c.learnt()) /*auto*/{
+-    
+-           learnts_literals -= c.size();
+-    
+-    }/*auto*/
+-    else            /*auto*/{
+-    
+-           clauses_literals -= c.size();
+-    
+-    }/*auto*/ }
++     }
+ 
+ 
+ void Solver::removeClause(CRef cr) {
+     Clause& c = ca[cr];
+     detachClause(cr);
+     // Don't leave pointers to free'd memory!
+-    if (locked(c)) /*auto*/{
+-      vardata[var(c[0])].reason = CRef_Undef;
+-    }/*auto*/
++    
+     c.mark(1); 
+-    ca.free(cr);
++    
+ }
+ 
+ 
+@@ -257,12 +246,7 @@
+     Var next = var_Undef;
+ 
+     // Random decision:
+-    if (drand(random_seed) < random_var_freq && !order_heap.empty()){
+-        next = order_heap[irand(random_seed,order_heap.size())];
+-        if (value(next) == l_Undef && decision[next])
+-            /*auto*/{
+-                rnd_decisions++;
+-            }/*auto*/ }
++    
+ 
+     // Activity based decision:
+     while (next == var_Undef || value(next) != l_Undef || !decision[next])
+@@ -308,7 +292,7 @@
+     int index   = trail.size() - 1;
+ 
+     do{
+-        assert(confl != CRef_Undef); // (otherwise should be UIP)
++         // (otherwise should be UIP)
+         Clause& c = ca[confl];
+ 
+         if (c.learnt())
+@@ -481,7 +465,7 @@
+         if (seen[x]){
+             if (reason(x) == CRef_Undef){
+                 assert(level(x) > 0);
+-                out_conflict.push(~trail[i]);
++                
+             }else{
+                 Clause& c = ca[reason(x)];
+                 for (int j = 1; j < c.size(); j++)
+@@ -502,7 +486,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -747,7 +731,7 @@
+ 
+             if (--learntsize_adjust_cnt == 0){
+                 learntsize_adjust_confl *= learntsize_adjust_inc;
+-                learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
++                
+                 max_learnts             *= learntsize_inc;
+ 
+                 if (verbosity >= 1)
+@@ -761,11 +745,7 @@
+ 
+         }else{
+             // NO CONFLICT
+-            if (nof_conflicts >= 0 && conflictC >= nof_conflicts || !withinBudget()){
+-                // Reached bound on number of conflicts:
+-                progress_estimate = progressEstimate();
+-                cancelUntil(0);
+-                return l_Undef; }
++            
+ 
+             // Simplify the set of problem clauses:
+             if (decisionLevel() == 0 && !simplify())
+@@ -791,7 +771,7 @@
+                     return l_False;
+                 }else{
+                     next = p;
+-                    break;
++                    
+                 }
+             }
+ 

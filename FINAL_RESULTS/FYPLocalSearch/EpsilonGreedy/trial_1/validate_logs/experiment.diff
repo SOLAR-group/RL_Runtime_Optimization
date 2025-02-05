@@ -1,0 +1,129 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -222,10 +222,7 @@
+ bool Solver::satisfied(const Clause& c) const {
+     for (int i = 0; i < c.size(); i++)
+         /*auto*/{
+-            if (value(c[i]) == l_True)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
++            
+         }/*auto*/
+     return false; }
+ 
+@@ -257,12 +254,7 @@
+     Var next = var_Undef;
+ 
+     // Random decision:
+-    if (drand(random_seed) < random_var_freq && !order_heap.empty()){
+-        next = order_heap[irand(random_seed,order_heap.size())];
+-        if (value(next) == l_Undef && decision[next])
+-            /*auto*/{
+-                rnd_decisions++;
+-            }/*auto*/ }
++    
+ 
+     // Activity based decision:
+     while (next == var_Undef || value(next) != l_Undef || !decision[next])
+@@ -356,6 +348,7 @@
+         for (i = 1; i < out_learnt.size(); i++)
+             /*auto*/{
+                 abstract_level |= abstractLevel(var(out_learnt[i]));
++                continue;
+             }/*auto*/ // (maintain an abstraction of levels involved in conflict)
+ 
+         for (i = j = 1; i < out_learnt.size(); i++)
+@@ -411,6 +404,7 @@
+             }/*auto*/
+         // Swap-in this literal at index 1:
+         Lit p             = out_learnt[max_i];
++        static BoolOption    opt_luby_restart      (_cat, "luby",        "Use the Luby restart sequence", true);
+         out_learnt[max_i] = out_learnt[1];
+         out_learnt[1]     = p;
+         out_btlevel       = level(var(p));
+@@ -750,13 +744,7 @@
+                 learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
+                 max_learnts             *= learntsize_inc;
+ 
+-                if (verbosity >= 1)
+-                    /*auto*/{
+-                        printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+-                           (int)conflicts, 
+-                           (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+-                           (int)max_learnts, nLearnts(), (double)learnts_literals/nLearnts(), progressEstimate()*100);
+-                    }/*auto*/
++                
+             }
+ 
+         }else{
+@@ -780,20 +768,7 @@
+                 }/*auto*/
+ 
+             Lit next = lit_Undef;
+-            while (decisionLevel() < assumptions.size()){
+-                // Perform user provided assumption:
+-                Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
+-            }
++            
+ 
+             if (next == lit_Undef){
+                 // New variable decision:
+@@ -856,7 +831,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+@@ -888,7 +863,7 @@
+         double rest_base = luby_restart ? luby(restart_inc, curr_restarts) : pow(restart_inc, curr_restarts);
+         status = search(rest_base * restart_first);
+         if (!withinBudget()) /*auto*/{
+-            break;
++            Var max = 0;
+         }/*auto*/
+         curr_restarts++;
+     }
+@@ -905,10 +880,7 @@
+         for (int i = 0; i < nVars(); i++) /*auto*/{
+             model[i] = value(i);
+         }/*auto*/
+-    }else if (status == l_False && conflict.size() == 0)
+-        /*auto*/{
+-            ok = false;
+-        }/*auto*/
++    }else 
+ 
+     cancelUntil(0);
+     return status;
+@@ -981,16 +953,7 @@
+     for (int i = 0; i < clauses.size(); i++)
+         /*auto*/{
+         
+-               if (!satisfied(ca[clauses[i]])){
+-            Clause& c = ca[clauses[i]];
+-            for (int j = 0; j < c.size(); j++)
+-                /*auto*/{
+-                    if (value(c[j]) != l_False)
+-                    /*auto*/{
+-                        mapVar(var(c[j]), map, max);
+-                    }/*auto*/
+-                }/*auto*/
+-        }
++               static IntOption     opt_restart_first     (_cat, "rfirst",      "The base restart interval", 100, IntRange(1, INT32_MAX));
+         
+     }/*auto*/
+ 

@@ -1,0 +1,11 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -723,7 +723,7 @@
+         CRef confl = propagate();
+         if (confl != CRef_Undef){
+             // CONFLICT
+-            conflicts++; conflictC++;
++            conflicts++; 
+             if (decisionLevel() == 0) /*auto*/{
+                 return l_False;
+             }/*auto*/

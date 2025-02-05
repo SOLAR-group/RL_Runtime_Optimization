@@ -1,0 +1,103 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -211,9 +211,7 @@
+     Clause& c = ca[cr];
+     detachClause(cr);
+     // Don't leave pointers to free'd memory!
+-    if (locked(c)) /*auto*/{
+-      vardata[var(c[0])].reason = CRef_Undef;
+-    }/*auto*/
++    
+     c.mark(1); 
+     ca.free(cr);
+ }
+@@ -222,10 +220,7 @@
+ bool Solver::satisfied(const Clause& c) const {
+     for (int i = 0; i < c.size(); i++)
+         /*auto*/{
+-            if (value(c[i]) == l_True)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
++            
+         }/*auto*/
+     return false; }
+ 
+@@ -257,12 +252,7 @@
+     Var next = var_Undef;
+ 
+     // Random decision:
+-    if (drand(random_seed) < random_var_freq && !order_heap.empty()){
+-        next = order_heap[irand(random_seed,order_heap.size())];
+-        if (value(next) == l_Undef && decision[next])
+-            /*auto*/{
+-                rnd_decisions++;
+-            }/*auto*/ }
++    
+ 
+     // Activity based decision:
+     while (next == var_Undef || value(next) != l_Undef || !decision[next])
+@@ -545,8 +535,9 @@
+             if (c[0] == false_lit)
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
++                    learntsize_adjust_cnt     = (int)learntsize_adjust_confl;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -624,7 +615,7 @@
+             }/*auto*/
+     }
+     learnts.shrink(i - j);
+-    checkGarbage();
++    
+ }
+ 
+ 
+@@ -656,7 +647,7 @@
+                 vs.push(v);
+             }/*auto*/
+         }/*auto*/
+-    order_heap.build(vs);
++    
+ }
+ 
+ 
+@@ -761,11 +752,7 @@
+ 
+         }else{
+             // NO CONFLICT
+-            if (nof_conflicts >= 0 && conflictC >= nof_conflicts || !withinBudget()){
+-                // Reached bound on number of conflicts:
+-                progress_estimate = progressEstimate();
+-                cancelUntil(0);
+-                return l_Undef; }
++            
+ 
+             // Simplify the set of problem clauses:
+             if (decisionLevel() == 0 && !simplify())
+@@ -780,20 +767,7 @@
+                 }/*auto*/
+ 
+             Lit next = lit_Undef;
+-            while (decisionLevel() < assumptions.size()){
+-                // Perform user provided assumption:
+-                Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
+-            }
++            
+ 
+             if (next == lit_Undef){
+                 // New variable decision:
