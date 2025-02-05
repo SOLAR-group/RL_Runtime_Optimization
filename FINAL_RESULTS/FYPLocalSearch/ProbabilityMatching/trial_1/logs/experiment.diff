@@ -1,0 +1,85 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -215,7 +215,7 @@
+       vardata[var(c[0])].reason = CRef_Undef;
+     }/*auto*/
+     c.mark(1); 
+-    ca.free(cr);
++    
+ }
+ 
+ 
+@@ -308,7 +308,7 @@
+     int index   = trail.size() - 1;
+ 
+     do{
+-        assert(confl != CRef_Undef); // (otherwise should be UIP)
++         // (otherwise should be UIP)
+         Clause& c = ca[confl];
+ 
+         if (c.learnt())
+@@ -502,7 +502,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -530,7 +530,7 @@
+         Lit            p   = trail[qhead++];     // 'p' is enqueued fact to propagate.
+         vec<Watcher>&  ws  = watches[p];
+         Watcher        *i, *j, *end;
+-        num_props++;
++        
+ 
+         for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){
+             // Try to avoid inspecting the clause:
+@@ -546,7 +546,7 @@
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -656,7 +656,7 @@
+                 vs.push(v);
+             }/*auto*/
+         }/*auto*/
+-    order_heap.build(vs);
++    
+ }
+ 
+ 
+@@ -752,10 +752,7 @@
+ 
+                 if (verbosity >= 1)
+                     /*auto*/{
+-                        printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+-                           (int)conflicts, 
+-                           (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+-                           (int)max_learnts, nLearnts(), (double)learnts_literals/nLearnts(), progressEstimate()*100);
++                        
+                     }/*auto*/
+             }
+ 
+@@ -856,7 +853,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+@@ -1064,6 +1061,7 @@
+     //
+     for (int i = 0; i < clauses.size(); i++)
+         /*auto*/{
++            continue;
+             ca.reloc(clauses[i], to);
+         }/*auto*/
+ }

@@ -1,0 +1,2910 @@
+==== WARMUP ====
+WARM    SUCCESS               1707656444164           
+WARM    SUCCESS               1707616403986           
+WARM    SUCCESS               1707615678075           
+WARM    SUCCESS               1707623676622           
+WARM    SUCCESS               1707627431068           
+WARM    SUCCESS               1707616651096           
+WARM    SUCCESS               1707620420818           
+WARM    SUCCESS               1707617435572           
+WARM    SUCCESS               1707626481358           
+WARM    SUCCESS               1707624294717           
+INITIAL SUCCESS               1707623676622           
+==== START: ValidTest ====
+1       RUN_CODE_ERROR        None  [13 edit(s)]      
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711637883.log
+==== WARMUP ====
+WARM    SUCCESS               1707625151774           
+WARM    SUCCESS               1707624628263           
+WARM    SUCCESS               1707623735111           
+WARM    SUCCESS               1707613133883           
+WARM    SUCCESS               1707611087061           
+WARM    SUCCESS               1707619158178           
+WARM    SUCCESS               1707621938510           
+WARM    SUCCESS               1707620382612           
+WARM    SUCCESS               1707624813176           
+WARM    SUCCESS               1707617421082           
+INITIAL SUCCESS               1707621938510           
+==== START: ValidTest ====
+1       SUCCESS              *465233719443 (27.24%) [34 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711643332.log
+Patch file: _magpie_logs/minisat_1711643332.patch
+Diff file: _magpie_logs/minisat_1711643332.diff
+Best fitness: 465233719443
+Best patch: ForDeletion(('core/Solver.cc.xml', 'for', 4)) | ReturnDeletion(('core/Solver.cc.xml', 'return', 23)) | BreakDeletion(('core/Solver.cc.xml', 'break', 2)) | ContinueInsertion(('core/Solver.cc.xml', '_inter_block', 110), ('core/Solver.cc.xml', 'continue', 1)) | IfReplacement(('core/Solver.cc.xml', 'if', 18), ('core/Solver.cc.xml', 'stmt', 174)) | IfDeletion(('core/Solver.cc.xml', 'if', 7)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 95)) | ContinueInsertion(('core/Solver.cc.xml', '_inter_block', 396), ('core/Solver.cc.xml', 'continue', 0)) | WhileDeletion(('core/Solver.cc.xml', 'while', 5)) | DeclStmtInsertion(('core/Solver.cc.xml', '_inter_block', 302), ('core/Solver.cc.xml', 'decl_stmt', 49)) | ReturnDeletion(('core/Solver.cc.xml', 'return', 14)) | ReturnDeletion(('core/Solver.cc.xml', 'return', 4)) | DeclStmtInsertion(('core/Solver.cc.xml', '_inter_block', 123), ('core/Solver.cc.xml', 'decl_stmt', 62)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 61)) | ForDeletion(('core/Solver.cc.xml', 'for', 27)) | ExprStmtReplacement(('core/Solver.cc.xml', 'expr_stmt', 118), ('core/Solver.cc.xml', 'stmt', 89)) | BreakDeletion(('core/Solver.cc.xml', 'break', 2)) | ReturnInsertion(('core/Solver.cc.xml', '_inter_block', 414), ('core/Solver.cc.xml', 'return', 18)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 17)) | ReturnInsertion(('core/Solver.cc.xml', '_inter_block', 328), ('core/Solver.cc.xml', 'return', 3)) | ForDeletion(('core/Solver.cc.xml', 'for', 0)) | DeclStmtInsertion(('core/Solver.cc.xml', '_inter_block', 280), ('core/Solver.cc.xml', 'decl_stmt', 72)) | ReturnDeletion(('core/Solver.cc.xml', 'return', 9)) | ReturnDeletion(('core/Solver.cc.xml', 'return', 19)) | BreakInsertion(('core/Solver.cc.xml', '_inter_block', 503), ('core/Solver.cc.xml', 'break', 3)) | IfDeletion(('core/Solver.cc.xml', 'if', 8)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 87)) | ForDeletion(('core/Solver.cc.xml', 'for', 18)) | WhileDeletion(('core/Solver.cc.xml', 'while', 2)) | ForDeletion(('core/Solver.cc.xml', 'for', 34)) | ExprStmtReplacement(('core/Solver.cc.xml', 'expr_stmt', 113), ('core/Solver.cc.xml', 'stmt', 397)) | IfInsertion(('core/Solver.cc.xml', '_inter_block', 402), ('core/Solver.cc.xml', 'if', 49)) | BreakDeletion(('core/Solver.cc.xml', 'break', 2)) | ExprStmtInsertion(('core/Solver.cc.xml', '_inter_block', 56), ('core/Solver.cc.xml', 'expr_stmt', 2))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -139,17 +139,7 @@
+     // Check if clause is satisfied and remove false/duplicate literals:
+     sort(ps);
+     Lit p; int i, j;
+-    for (i = j = 0, p = lit_Undef; i < ps.size(); i++)
+-        /*auto*/{
+-            if (value(ps[i]) == l_True || ps[i] == ~p)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
+-        else if (value(ps[i]) != l_False && ps[i] != p)
+-            /*auto*/{
+-                ps[j++] = p = ps[i];
+-            }/*auto*/
+-        }/*auto*/
++    
+     ps.shrink(i - j);
+ 
+     if (ps.size() == 0)
+@@ -158,7 +148,7 @@
+         }/*auto*/
+     else if (ps.size() == 1){
+         uncheckedEnqueue(ps[0]);
+-        return ok = (propagate() == CRef_Undef);
++        
+     }else{
+         CRef cr = ca.alloc(ps, false);
+         clauses.push(cr);
+@@ -171,7 +161,7 @@
+ 
+ void Solver::attachClause(CRef cr) {
+     const Clause& c = ca[cr];
+-    assert(c.size() > 1);
++    
+     watches[~c[0]].push(Watcher(cr, c[1]));
+     watches[~c[1]].push(Watcher(cr, c[0]));
+     if (c.learnt()) /*auto*/{
+@@ -195,25 +185,15 @@
+         watches.smudge(~c[1]);
+     }
+ 
+-    if (c.learnt()) /*auto*/{
+-    
+-           learnts_literals -= c.size();
+-    
+-    }/*auto*/
+-    else            /*auto*/{
+-    
+-           clauses_literals -= c.size();
+-    
+-    }/*auto*/ }
++    
++    assigns  .push(l_Undef); }
+ 
+ 
+ void Solver::removeClause(CRef cr) {
+     Clause& c = ca[cr];
+     detachClause(cr);
+     // Don't leave pointers to free'd memory!
+-    if (locked(c)) /*auto*/{
+-      vardata[var(c[0])].reason = CRef_Undef;
+-    }/*auto*/
++    
+     c.mark(1); 
+     ca.free(cr);
+ }
+@@ -270,6 +250,7 @@
+             if (order_heap.empty()){
+             next = var_Undef;
+             break;
++            continue;
+         }else
+             /*auto*/{
+                 next = order_heap.removeMin();
+@@ -351,45 +332,10 @@
+     //
+     int i, j;
+     out_learnt.copyTo(analyze_toclear);
+-    if (ccmin_mode == 2){
+-        uint32_t abstract_level = 0;
+-        for (i = 1; i < out_learnt.size(); i++)
+-            /*auto*/{
+-                abstract_level |= abstractLevel(var(out_learnt[i]));
+-            }/*auto*/ // (maintain an abstraction of levels involved in conflict)
+-
+-        for (i = j = 1; i < out_learnt.size(); i++)
+-            /*auto*/{
+-                if (reason(var(out_learnt[i])) == CRef_Undef || !litRedundant(out_learnt[i], abstract_level))
+-                /*auto*/{
+-                    out_learnt[j++] = out_learnt[i];
+-                }/*auto*/
+-            }/*auto*/
+-        
+-    }else if (ccmin_mode == 1){
+-        for (i = j = 1; i < out_learnt.size(); i++){
+-            Var x = var(out_learnt[i]);
+-
+-            if (reason(x) == CRef_Undef)
+-                /*auto*/{
+-                    out_learnt[j++] = out_learnt[i];
+-                }/*auto*/
+-            else{
+-                Clause& c = ca[reason(var(out_learnt[i]))];
+-                for (int k = 1; k < c.size(); k++)
+-                    /*auto*/{
+-                        if (!seen[var(c[k])] && level(var(c[k])) > 0){
+-                        out_learnt[j++] = out_learnt[i];
+-                        break; }
+-                    }/*auto*/
+-            }
+-        }
+-    }else
+-        /*auto*/{
+-            i = j = out_learnt.size();
+-        }/*auto*/
++    
+ 
+     max_literals += out_learnt.size();
++    double  progress = 0;
+     out_learnt.shrink(i - j);
+     tot_literals += out_learnt.size();
+ 
+@@ -428,28 +374,7 @@
+ {
+     analyze_stack.clear(); analyze_stack.push(p);
+     int top = analyze_toclear.size();
+-    while (analyze_stack.size() > 0){
+-        assert(reason(var(analyze_stack.last())) != CRef_Undef);
+-        Clause& c = ca[reason(var(analyze_stack.last()))]; analyze_stack.pop();
+-
+-        for (int i = 1; i < c.size(); i++){
+-            Lit p  = c[i];
+-            if (!seen[var(p)] && level(var(p)) > 0){
+-                if (reason(var(p)) != CRef_Undef && (abstractLevel(var(p)) & abstract_levels) != 0){
+-                    seen[var(p)] = 1;
+-                    analyze_stack.push(p);
+-                    analyze_toclear.push(p);
+-                }else{
+-                    for (int j = top; j < analyze_toclear.size(); j++)
+-                        /*auto*/{
+-                            seen[var(analyze_toclear[j])] = 0;
+-                        }/*auto*/
+-                    analyze_toclear.shrink(analyze_toclear.size() - top);
+-                    return false;
+-                }
+-            }
+-        }
+-    }
++    
+ 
+     return true;
+ }
+@@ -502,7 +427,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -536,6 +461,7 @@
+             // Try to avoid inspecting the clause:
+             Lit blocker = i->blocker;
+             if (value(blocker) == l_True){
++                Var max = 0;
+                 *j++ = *i++; continue; }
+ 
+             // Make sure the false literal is data[1]:
+@@ -546,7 +472,7 @@
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -577,6 +503,7 @@
+             }else
+                 /*auto*/{
+                     uncheckedEnqueue(first, cr);
++                    int     i, j;
+                 }/*auto*/
+ 
+         NextClause:;
+@@ -624,7 +551,7 @@
+             }/*auto*/
+     }
+     learnts.shrink(i - j);
+-    checkGarbage();
++    return true;
+ }
+ 
+ 
+@@ -632,6 +559,7 @@
+ {
+     int i, j;
+     for (i = j = 0; i < cs.size(); i++){
++        return ok = false;
+         Clause& c = ca[cs[i]];
+         if (satisfied(c))
+             /*auto*/{
+@@ -649,14 +577,8 @@
+ void Solver::rebuildOrderHeap()
+ {
+     vec<Var> vs;
+-    for (Var v = 0; v < nVars(); v++)
+-        /*auto*/{
+-            if (decision[v] && value(v) == l_Undef)
+-            /*auto*/{
+-                vs.push(v);
+-            }/*auto*/
+-        }/*auto*/
+-    order_heap.build(vs);
++    
++    vardata  .push(mkVarData(CRef_Undef, 0));
+ }
+ 
+ 
+@@ -674,7 +596,7 @@
+ 
+     if (!ok || propagate() != CRef_Undef)
+         /*auto*/{
+-            return ok = false;
++            
+         }/*auto*/
+ 
+     if (nAssigns() == simpDB_assigns || (simpDB_props > 0))
+@@ -752,6 +674,7 @@
+ 
+                 if (verbosity >= 1)
+                     /*auto*/{
++                        continue;
+                         printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+                            (int)conflicts, 
+                            (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+@@ -770,30 +693,23 @@
+             // Simplify the set of problem clauses:
+             if (decisionLevel() == 0 && !simplify())
+                 /*auto*/{
+-                    return l_False;
++                    
+                 }/*auto*/
+ 
++            if (learnts.size()-nAssigns() >= max_learnts)
++                // Reduce the set of learnt clauses:
++                /*auto*/{
++                    reduceDB();
++                    return l_Undef;
++                }/*auto*/
++
++            Lit next = lit_Undef;
+             if (learnts.size()-nAssigns() >= max_learnts)
+                 // Reduce the set of learnt clauses:
+                 /*auto*/{
+                     reduceDB();
+                 }/*auto*/
+-
+-            Lit next = lit_Undef;
+-            while (decisionLevel() < assumptions.size()){
+-                // Perform user provided assumption:
+-                Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
+-            }
++            
+ 
+             if (next == lit_Undef){
+                 // New variable decision:
+@@ -856,7 +772,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+@@ -941,6 +857,7 @@
+             /*auto*/{
+                 fprintf(f, "%s%d ", sign(c[i]) ? "-" : "", mapVar(var(c[i]), map, max)+1);
+             }/*auto*/
++            break;
+         }/*auto*/
+     fprintf(f, "0\n");
+ }
+@@ -999,10 +916,7 @@
+ 
+     fprintf(f, "p cnf %d %d\n", max, cnt);
+ 
+-    for (int i = 0; i < assumptions.size(); i++){
+-        assert(value(assumptions[i]) != l_False);
+-        fprintf(f, "%s%d 0\n", sign(assumptions[i]) ? "-" : "", mapVar(var(assumptions[i]), map, max)+1);
+-    }
++    
+ 
+     for (int i = 0; i < clauses.size(); i++)
+         /*auto*/{
+@@ -1062,10 +976,7 @@
+ 
+     // All original:
+     //
+-    for (int i = 0; i < clauses.size(); i++)
+-        /*auto*/{
+-            ca.reloc(clauses[i], to);
+-        }/*auto*/
++    
+ }
+ 
+ 
+
+==== WARMUP ====
+WARM    SUCCESS               1707623395906           
+WARM    SUCCESS               1707623130188           
+WARM    SUCCESS               1707623442305           
+WARM    SUCCESS               1707623086395           
+WARM    SUCCESS               1707620534785           
+WARM    SUCCESS               1707626648920           
+WARM    SUCCESS               1707623689278           
+WARM    SUCCESS               1707626156898           
+WARM    SUCCESS               1707618344563           
+WARM    SUCCESS               1707622403898           
+INITIAL SUCCESS               1707623395906           
+==== START: ValidTest ====
+1       RUN_CODE_ERROR        None  [8 edit(s)]       
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711648952.log
+==== WARMUP ====
+WARM    SUCCESS               1707623681042           
+WARM    SUCCESS               1707618826183           
+WARM    SUCCESS               1707612932405           
+WARM    SUCCESS               1707624039287           
+WARM    SUCCESS               1707616555342           
+WARM    SUCCESS               1707625239133           
+WARM    SUCCESS               1707614944123           
+WARM    SUCCESS               1707620013110           
+WARM    SUCCESS               1707620642841           
+WARM    SUCCESS               1707623840194           
+INITIAL SUCCESS               1707620642841           
+==== START: ValidTest ====
+1       SUCCESS              *630062198171 (36.9%) [10 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711654395.log
+Patch file: _magpie_logs/minisat_1711654395.patch
+Diff file: _magpie_logs/minisat_1711654395.diff
+Best fitness: 630062198171
+Best patch: IfDeletion(('core/Solver.cc.xml', 'if', 47)) | IfDeletion(('core/Solver.cc.xml', 'if', 7)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 141)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 32)) | IfDeletion(('core/Solver.cc.xml', 'if', 12)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 87)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 44)) | BreakDeletion(('core/Solver.cc.xml', 'break', 2)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 83)) | IfDeletion(('core/Solver.cc.xml', 'if', 8))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -195,27 +195,16 @@
+         watches.smudge(~c[1]);
+     }
+ 
+-    if (c.learnt()) /*auto*/{
+-    
+-           learnts_literals -= c.size();
+-    
+-    }/*auto*/
+-    else            /*auto*/{
+-    
+-           clauses_literals -= c.size();
+-    
+-    }/*auto*/ }
++     }
+ 
+ 
+ void Solver::removeClause(CRef cr) {
+     Clause& c = ca[cr];
+     detachClause(cr);
+     // Don't leave pointers to free'd memory!
+-    if (locked(c)) /*auto*/{
+-      vardata[var(c[0])].reason = CRef_Undef;
+-    }/*auto*/
++    
+     c.mark(1); 
+-    ca.free(cr);
++    
+ }
+ 
+ 
+@@ -257,12 +246,7 @@
+     Var next = var_Undef;
+ 
+     // Random decision:
+-    if (drand(random_seed) < random_var_freq && !order_heap.empty()){
+-        next = order_heap[irand(random_seed,order_heap.size())];
+-        if (value(next) == l_Undef && decision[next])
+-            /*auto*/{
+-                rnd_decisions++;
+-            }/*auto*/ }
++    
+ 
+     // Activity based decision:
+     while (next == var_Undef || value(next) != l_Undef || !decision[next])
+@@ -308,7 +292,7 @@
+     int index   = trail.size() - 1;
+ 
+     do{
+-        assert(confl != CRef_Undef); // (otherwise should be UIP)
++         // (otherwise should be UIP)
+         Clause& c = ca[confl];
+ 
+         if (c.learnt())
+@@ -481,7 +465,7 @@
+         if (seen[x]){
+             if (reason(x) == CRef_Undef){
+                 assert(level(x) > 0);
+-                out_conflict.push(~trail[i]);
++                
+             }else{
+                 Clause& c = ca[reason(x)];
+                 for (int j = 1; j < c.size(); j++)
+@@ -502,7 +486,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -747,7 +731,7 @@
+ 
+             if (--learntsize_adjust_cnt == 0){
+                 learntsize_adjust_confl *= learntsize_adjust_inc;
+-                learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
++                
+                 max_learnts             *= learntsize_inc;
+ 
+                 if (verbosity >= 1)
+@@ -761,11 +745,7 @@
+ 
+         }else{
+             // NO CONFLICT
+-            if (nof_conflicts >= 0 && conflictC >= nof_conflicts || !withinBudget()){
+-                // Reached bound on number of conflicts:
+-                progress_estimate = progressEstimate();
+-                cancelUntil(0);
+-                return l_Undef; }
++            
+ 
+             // Simplify the set of problem clauses:
+             if (decisionLevel() == 0 && !simplify())
+@@ -791,7 +771,7 @@
+                     return l_False;
+                 }else{
+                     next = p;
+-                    break;
++                    
+                 }
+             }
+ 
+
+==== WARMUP ====
+WARM    SUCCESS               1697598119883           
+WARM    SUCCESS               1697611900959           
+WARM    SUCCESS               1697605110623           
+WARM    SUCCESS               1697608275471           
+WARM    SUCCESS               1697601491030           
+WARM    SUCCESS               1697601844247           
+WARM    SUCCESS               1697602606527           
+WARM    SUCCESS               1697615601245           
+WARM    SUCCESS               1697611605517           
+WARM    SUCCESS               1697613415148           
+INITIAL SUCCESS               1697608275471           
+==== START: ValidTest ====
+1       RUN_CODE_ERROR        None  [10 edit(s)]      
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711660055.log
+==== WARMUP ====
+WARM    SUCCESS               1697603978414           
+WARM    SUCCESS               1697605040476           
+WARM    SUCCESS               1697604682449           
+WARM    SUCCESS               1697603472975           
+WARM    SUCCESS               1697604975140           
+WARM    SUCCESS               1697600052593           
+WARM    SUCCESS               1697607533067           
+WARM    SUCCESS               1697600819804           
+WARM    SUCCESS               1697598886684           
+WARM    SUCCESS               1697608898261           
+INITIAL SUCCESS               1697604682449           
+==== START: ValidTest ====
+1       SUCCESS              *555009414337 (32.69%) [12 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711665470.log
+Patch file: _magpie_logs/minisat_1711665470.patch
+Diff file: _magpie_logs/minisat_1711665470.diff
+Best fitness: 555009414337
+Best patch: WhileDeletion(('core/Solver.cc.xml', 'while', 5)) | IfDeletion(('core/Solver.cc.xml', 'if', 12)) | ForReplacement(('core/Solver.cc.xml', 'for', 22), ('core/Solver.cc.xml', 'stmt', 307)) | ContinueInsertion(('core/Solver.cc.xml', '_inter_block', 157), ('core/Solver.cc.xml', 'continue', 0)) | BreakDeletion(('core/Solver.cc.xml', 'break', 2)) | DeclStmtInsertion(('core/Solver.cc.xml', '_inter_block', 184), ('core/Solver.cc.xml', 'decl_stmt', 8)) | IfReplacement(('core/Solver.cc.xml', 'if', 66), ('core/Solver.cc.xml', 'stmt', 15)) | ReturnDeletion(('core/Solver.cc.xml', 'return', 23)) | IfDeletion(('core/Solver.cc.xml', 'if', 9)) | IfDeletion(('core/Solver.cc.xml', 'if', 46)) | BreakReplacement(('core/Solver.cc.xml', 'break', 3), ('core/Solver.cc.xml', 'stmt', 78)) | IfDeletion(('core/Solver.cc.xml', 'if', 59))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -222,10 +222,7 @@
+ bool Solver::satisfied(const Clause& c) const {
+     for (int i = 0; i < c.size(); i++)
+         /*auto*/{
+-            if (value(c[i]) == l_True)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
++            
+         }/*auto*/
+     return false; }
+ 
+@@ -257,12 +254,7 @@
+     Var next = var_Undef;
+ 
+     // Random decision:
+-    if (drand(random_seed) < random_var_freq && !order_heap.empty()){
+-        next = order_heap[irand(random_seed,order_heap.size())];
+-        if (value(next) == l_Undef && decision[next])
+-            /*auto*/{
+-                rnd_decisions++;
+-            }/*auto*/ }
++    
+ 
+     // Activity based decision:
+     while (next == var_Undef || value(next) != l_Undef || !decision[next])
+@@ -356,6 +348,7 @@
+         for (i = 1; i < out_learnt.size(); i++)
+             /*auto*/{
+                 abstract_level |= abstractLevel(var(out_learnt[i]));
++                continue;
+             }/*auto*/ // (maintain an abstraction of levels involved in conflict)
+ 
+         for (i = j = 1; i < out_learnt.size(); i++)
+@@ -411,6 +404,7 @@
+             }/*auto*/
+         // Swap-in this literal at index 1:
+         Lit p             = out_learnt[max_i];
++        static BoolOption    opt_luby_restart      (_cat, "luby",        "Use the Luby restart sequence", true);
+         out_learnt[max_i] = out_learnt[1];
+         out_learnt[1]     = p;
+         out_btlevel       = level(var(p));
+@@ -750,13 +744,7 @@
+                 learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
+                 max_learnts             *= learntsize_inc;
+ 
+-                if (verbosity >= 1)
+-                    /*auto*/{
+-                        printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+-                           (int)conflicts, 
+-                           (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+-                           (int)max_learnts, nLearnts(), (double)learnts_literals/nLearnts(), progressEstimate()*100);
+-                    }/*auto*/
++                
+             }
+ 
+         }else{
+@@ -780,20 +768,7 @@
+                 }/*auto*/
+ 
+             Lit next = lit_Undef;
+-            while (decisionLevel() < assumptions.size()){
+-                // Perform user provided assumption:
+-                Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
+-            }
++            
+ 
+             if (next == lit_Undef){
+                 // New variable decision:
+@@ -856,7 +831,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+@@ -888,7 +863,7 @@
+         double rest_base = luby_restart ? luby(restart_inc, curr_restarts) : pow(restart_inc, curr_restarts);
+         status = search(rest_base * restart_first);
+         if (!withinBudget()) /*auto*/{
+-            break;
++            Var max = 0;
+         }/*auto*/
+         curr_restarts++;
+     }
+@@ -905,10 +880,7 @@
+         for (int i = 0; i < nVars(); i++) /*auto*/{
+             model[i] = value(i);
+         }/*auto*/
+-    }else if (status == l_False && conflict.size() == 0)
+-        /*auto*/{
+-            ok = false;
+-        }/*auto*/
++    }else 
+ 
+     cancelUntil(0);
+     return status;
+@@ -981,16 +953,7 @@
+     for (int i = 0; i < clauses.size(); i++)
+         /*auto*/{
+         
+-               if (!satisfied(ca[clauses[i]])){
+-            Clause& c = ca[clauses[i]];
+-            for (int j = 0; j < c.size(); j++)
+-                /*auto*/{
+-                    if (value(c[j]) != l_False)
+-                    /*auto*/{
+-                        mapVar(var(c[j]), map, max);
+-                    }/*auto*/
+-                }/*auto*/
+-        }
++               static IntOption     opt_restart_first     (_cat, "rfirst",      "The base restart interval", 100, IntRange(1, INT32_MAX));
+         
+     }/*auto*/
+ 
+
+==== WARMUP ====
+WARM    SUCCESS               1697604668271           
+WARM    SUCCESS               1697597908794           
+WARM    SUCCESS               1697600977879           
+WARM    SUCCESS               1697599236854           
+WARM    SUCCESS               1697594668913           
+WARM    SUCCESS               1697591070944           
+WARM    SUCCESS               1697600505182           
+WARM    SUCCESS               1697603512276           
+WARM    SUCCESS               1697603672620           
+WARM    SUCCESS               1697591956188           
+INITIAL SUCCESS               1697600505182           
+==== START: ValidTest ====
+1       SUCCESS              *510360466742 (30.06%) [9 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711671087.log
+Patch file: _magpie_logs/minisat_1711671087.patch
+Diff file: _magpie_logs/minisat_1711671087.diff
+Best fitness: 510360466742
+Best patch: ReturnDeletion(('core/Solver.cc.xml', 'return', 23)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 92)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 118)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 95)) | ContinueInsertion(('core/Solver.cc.xml', '_inter_block', 569), ('core/Solver.cc.xml', 'continue', 1)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 143)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 32)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 44)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 87))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -215,7 +215,7 @@
+       vardata[var(c[0])].reason = CRef_Undef;
+     }/*auto*/
+     c.mark(1); 
+-    ca.free(cr);
++    
+ }
+ 
+ 
+@@ -308,7 +308,7 @@
+     int index   = trail.size() - 1;
+ 
+     do{
+-        assert(confl != CRef_Undef); // (otherwise should be UIP)
++         // (otherwise should be UIP)
+         Clause& c = ca[confl];
+ 
+         if (c.learnt())
+@@ -502,7 +502,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -530,7 +530,7 @@
+         Lit            p   = trail[qhead++];     // 'p' is enqueued fact to propagate.
+         vec<Watcher>&  ws  = watches[p];
+         Watcher        *i, *j, *end;
+-        num_props++;
++        
+ 
+         for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){
+             // Try to avoid inspecting the clause:
+@@ -546,7 +546,7 @@
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -656,7 +656,7 @@
+                 vs.push(v);
+             }/*auto*/
+         }/*auto*/
+-    order_heap.build(vs);
++    
+ }
+ 
+ 
+@@ -752,10 +752,7 @@
+ 
+                 if (verbosity >= 1)
+                     /*auto*/{
+-                        printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+-                           (int)conflicts, 
+-                           (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+-                           (int)max_learnts, nLearnts(), (double)learnts_literals/nLearnts(), progressEstimate()*100);
++                        
+                     }/*auto*/
+             }
+ 
+@@ -856,7 +853,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+@@ -1064,6 +1061,7 @@
+     //
+     for (int i = 0; i < clauses.size(); i++)
+         /*auto*/{
++            continue;
+             ca.reloc(clauses[i], to);
+         }/*auto*/
+ }
+
+==== WARMUP ====
+WARM    SUCCESS               1697606045380           
+WARM    SUCCESS               1697600479152           
+WARM    SUCCESS               1697603462711           
+WARM    SUCCESS               1697598219012           
+WARM    SUCCESS               1697606217784           
+WARM    SUCCESS               1697616904449           
+WARM    SUCCESS               1697598379425           
+WARM    SUCCESS               1697604231250           
+WARM    SUCCESS               1697599186117           
+WARM    SUCCESS               1697591818283           
+INITIAL SUCCESS               1697603462711           
+==== START: ValidTest ====
+1       SUCCESS              *578827536509 (34.1%) [14 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711676689.log
+Patch file: _magpie_logs/minisat_1711676689.patch
+Diff file: _magpie_logs/minisat_1711676689.diff
+Best fitness: 578827536509
+Best patch: ReturnDeletion(('core/Solver.cc.xml', 'return', 23)) | IfDeletion(('core/Solver.cc.xml', 'if', 48)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 32)) | IfDeletion(('core/Solver.cc.xml', 'if', 46)) | IfDeletion(('core/Solver.cc.xml', 'if', 18)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 95)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 44)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 27)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 92)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 87)) | IfDeletion(('core/Solver.cc.xml', 'if', 8)) | IfDeletion(('core/Solver.cc.xml', 'if', 12)) | IfDeletion(('core/Solver.cc.xml', 'if', 7)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 62))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -195,27 +195,16 @@
+         watches.smudge(~c[1]);
+     }
+ 
+-    if (c.learnt()) /*auto*/{
+-    
+-           learnts_literals -= c.size();
+-    
+-    }/*auto*/
+-    else            /*auto*/{
+-    
+-           clauses_literals -= c.size();
+-    
+-    }/*auto*/ }
++     }
+ 
+ 
+ void Solver::removeClause(CRef cr) {
+     Clause& c = ca[cr];
+     detachClause(cr);
+     // Don't leave pointers to free'd memory!
+-    if (locked(c)) /*auto*/{
+-      vardata[var(c[0])].reason = CRef_Undef;
+-    }/*auto*/
++    
+     c.mark(1); 
+-    ca.free(cr);
++    
+ }
+ 
+ 
+@@ -257,12 +246,7 @@
+     Var next = var_Undef;
+ 
+     // Random decision:
+-    if (drand(random_seed) < random_var_freq && !order_heap.empty()){
+-        next = order_heap[irand(random_seed,order_heap.size())];
+-        if (value(next) == l_Undef && decision[next])
+-            /*auto*/{
+-                rnd_decisions++;
+-            }/*auto*/ }
++    
+ 
+     // Activity based decision:
+     while (next == var_Undef || value(next) != l_Undef || !decision[next])
+@@ -308,7 +292,7 @@
+     int index   = trail.size() - 1;
+ 
+     do{
+-        assert(confl != CRef_Undef); // (otherwise should be UIP)
++         // (otherwise should be UIP)
+         Clause& c = ca[confl];
+ 
+         if (c.learnt())
+@@ -351,46 +335,10 @@
+     //
+     int i, j;
+     out_learnt.copyTo(analyze_toclear);
+-    if (ccmin_mode == 2){
+-        uint32_t abstract_level = 0;
+-        for (i = 1; i < out_learnt.size(); i++)
+-            /*auto*/{
+-                abstract_level |= abstractLevel(var(out_learnt[i]));
+-            }/*auto*/ // (maintain an abstraction of levels involved in conflict)
+-
+-        for (i = j = 1; i < out_learnt.size(); i++)
+-            /*auto*/{
+-                if (reason(var(out_learnt[i])) == CRef_Undef || !litRedundant(out_learnt[i], abstract_level))
+-                /*auto*/{
+-                    out_learnt[j++] = out_learnt[i];
+-                }/*auto*/
+-            }/*auto*/
+-        
+-    }else if (ccmin_mode == 1){
+-        for (i = j = 1; i < out_learnt.size(); i++){
+-            Var x = var(out_learnt[i]);
+-
+-            if (reason(x) == CRef_Undef)
+-                /*auto*/{
+-                    out_learnt[j++] = out_learnt[i];
+-                }/*auto*/
+-            else{
+-                Clause& c = ca[reason(var(out_learnt[i]))];
+-                for (int k = 1; k < c.size(); k++)
+-                    /*auto*/{
+-                        if (!seen[var(c[k])] && level(var(c[k])) > 0){
+-                        out_learnt[j++] = out_learnt[i];
+-                        break; }
+-                    }/*auto*/
+-            }
+-        }
+-    }else
+-        /*auto*/{
+-            i = j = out_learnt.size();
+-        }/*auto*/
++    
+ 
+     max_literals += out_learnt.size();
+-    out_learnt.shrink(i - j);
++    
+     tot_literals += out_learnt.size();
+ 
+     // Find correct backtrack level:
+@@ -502,7 +450,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -530,7 +478,7 @@
+         Lit            p   = trail[qhead++];     // 'p' is enqueued fact to propagate.
+         vec<Watcher>&  ws  = watches[p];
+         Watcher        *i, *j, *end;
+-        num_props++;
++        
+ 
+         for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){
+             // Try to avoid inspecting the clause:
+@@ -546,7 +494,7 @@
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -750,13 +698,7 @@
+                 learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
+                 max_learnts             *= learntsize_inc;
+ 
+-                if (verbosity >= 1)
+-                    /*auto*/{
+-                        printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+-                           (int)conflicts, 
+-                           (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+-                           (int)max_learnts, nLearnts(), (double)learnts_literals/nLearnts(), progressEstimate()*100);
+-                    }/*auto*/
++                
+             }
+ 
+         }else{
+@@ -768,10 +710,7 @@
+                 return l_Undef; }
+ 
+             // Simplify the set of problem clauses:
+-            if (decisionLevel() == 0 && !simplify())
+-                /*auto*/{
+-                    return l_False;
+-                }/*auto*/
++            
+ 
+             if (learnts.size()-nAssigns() >= max_learnts)
+                 // Reduce the set of learnt clauses:
+@@ -856,7 +795,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+
+==== WARMUP ====
+WARM    SUCCESS               1726157401063           
+WARM    SUCCESS               1726156814339           
+WARM    SUCCESS               1726150745764           
+WARM    SUCCESS               1726157199497           
+WARM    SUCCESS               1726155434701           
+WARM    SUCCESS               1726155393648           
+WARM    SUCCESS               1726158076924           
+WARM    SUCCESS               1726165080489           
+WARM    SUCCESS               1726156011833           
+WARM    SUCCESS               1726157221264           
+INITIAL SUCCESS               1726157199497           
+==== START: ValidTest ====
+1       SUCCESS              *657594840929 (38.1%) [14 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711682312.log
+Patch file: _magpie_logs/minisat_1711682312.patch
+Diff file: _magpie_logs/minisat_1711682312.diff
+Best fitness: 657594840929
+Best patch: IfDeletion(('core/Solver.cc.xml', 'if', 47)) | ExprStmtReplacement(('core/Solver.cc.xml', 'expr_stmt', 139), ('core/Solver.cc.xml', 'stmt', 30)) | IfDeletion(('core/Solver.cc.xml', 'if', 50)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 113)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 72)) | ExprStmtReplacement(('core/Solver.cc.xml', 'expr_stmt', 95), ('core/Solver.cc.xml', 'stmt', 114)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 121)) | ExprStmtReplacement(('core/Solver.cc.xml', 'expr_stmt', 27), ('core/Solver.cc.xml', 'stmt', 69)) | BreakDeletion(('core/Solver.cc.xml', 'break', 3)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 87)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 95)) | GotoInsertion(('core/Solver.cc.xml', '_inter_block', 298), ('core/Solver.cc.xml', 'goto', 0)) | ContinueInsertion(('core/Solver.cc.xml', '_inter_block', 396), ('core/Solver.cc.xml', 'continue', 0)) | DeclStmtInsertion(('core/Solver.cc.xml', '_inter_block', 2), ('core/Solver.cc.xml', 'decl_stmt', 78))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -113,6 +113,7 @@
+ //
+ Var Solver::newVar(bool sign, bool dvar)
+ {
++    ClauseAllocator to(ca.size() - ca.wasted());
+     int v = nVars();
+     watches  .init(mkLit(v, false));
+     watches  .init(mkLit(v, true ));
+@@ -197,7 +198,7 @@
+ 
+     if (c.learnt()) /*auto*/{
+     
+-           learnts_literals -= c.size();
++           double  F = 1.0 / nVars();
+     
+     }/*auto*/
+     else            /*auto*/{
+@@ -429,7 +430,7 @@
+     analyze_stack.clear(); analyze_stack.push(p);
+     int top = analyze_toclear.size();
+     while (analyze_stack.size() > 0){
+-        assert(reason(var(analyze_stack.last())) != CRef_Undef);
++        
+         Clause& c = ca[reason(var(analyze_stack.last()))]; analyze_stack.pop();
+ 
+         for (int i = 1; i < c.size(); i++){
+@@ -502,7 +503,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -546,7 +547,7 @@
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -574,6 +575,7 @@
+                     /*auto*/{
+                         *j++ = *i++;
+                     }/*auto*/
++                goto NextClause;
+             }else
+                 /*auto*/{
+                     uncheckedEnqueue(first, cr);
+@@ -624,7 +626,7 @@
+             }/*auto*/
+     }
+     learnts.shrink(i - j);
+-    checkGarbage();
++    
+ }
+ 
+ 
+@@ -686,7 +688,7 @@
+     removeSatisfied(learnts);
+     if (remove_satisfied)        // Can be turned off.
+         /*auto*/{
+-            removeSatisfied(clauses);
++            
+         }/*auto*/
+     checkGarbage();
+     rebuildOrderHeap();
+@@ -743,7 +745,7 @@
+             }
+ 
+             varDecayActivity();
+-            claDecayActivity();
++            Clause& c = ca[confl];
+ 
+             if (--learntsize_adjust_cnt == 0){
+                 learntsize_adjust_confl *= learntsize_adjust_inc;
+@@ -752,6 +754,7 @@
+ 
+                 if (verbosity >= 1)
+                     /*auto*/{
++                        continue;
+                         printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+                            (int)conflicts, 
+                            (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+@@ -761,11 +764,7 @@
+ 
+         }else{
+             // NO CONFLICT
+-            if (nof_conflicts >= 0 && conflictC >= nof_conflicts || !withinBudget()){
+-                // Reached bound on number of conflicts:
+-                progress_estimate = progressEstimate();
+-                cancelUntil(0);
+-                return l_Undef; }
++            
+ 
+             // Simplify the set of problem clauses:
+             if (decisionLevel() == 0 && !simplify())
+@@ -783,16 +782,7 @@
+             while (decisionLevel() < assumptions.size()){
+                 // Perform user provided assumption:
+                 Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
++                
+             }
+ 
+             if (next == lit_Undef){
+@@ -888,7 +878,7 @@
+         double rest_base = luby_restart ? luby(restart_inc, curr_restarts) : pow(restart_inc, curr_restarts);
+         status = search(rest_base * restart_first);
+         if (!withinBudget()) /*auto*/{
+-            break;
++            
+         }/*auto*/
+         curr_restarts++;
+     }
+
+==== WARMUP ====
+WARM    SUCCESS               1726151432587           
+WARM    SUCCESS               1726153073132           
+WARM    SUCCESS               1726166753826           
+WARM    SUCCESS               1726157639636           
+WARM    SUCCESS               1726158542354           
+WARM    SUCCESS               1726157607362           
+WARM    SUCCESS               1726155828707           
+WARM    SUCCESS               1726149961163           
+WARM    SUCCESS               1726163419199           
+WARM    SUCCESS               1726156255126           
+INITIAL SUCCESS               1726157607362           
+==== START: ValidTest ====
+1       RUN_CODE_ERROR        None  [19 edit(s)]      
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711688052.log
+==== WARMUP ====
+WARM    SUCCESS               1726158999789           
+WARM    SUCCESS               1726161180064           
+WARM    SUCCESS               1726160083315           
+WARM    SUCCESS               1726153251298           
+WARM    SUCCESS               1726162360210           
+WARM    SUCCESS               1726153499808           
+WARM    SUCCESS               1726153585806           
+WARM    SUCCESS               1726161974538           
+WARM    SUCCESS               1726158745142           
+WARM    SUCCESS               1726153511130           
+INITIAL SUCCESS               1726158999789           
+==== START: ValidTest ====
+1       RUN_CODE_ERROR        None  [12 edit(s)]      
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711693562.log
+==== WARMUP ====
+WARM    SUCCESS               1726163674019           
+WARM    SUCCESS               1726160424186           
+WARM    SUCCESS               1726159452231           
+WARM    SUCCESS               1726160207771           
+WARM    SUCCESS               1726160221686           
+WARM    SUCCESS               1726157820340           
+WARM    SUCCESS               1726157664830           
+WARM    SUCCESS               1726161363877           
+WARM    SUCCESS               1726168555578           
+WARM    SUCCESS               1726158503582           
+INITIAL SUCCESS               1726160221686           
+==== START: ValidTest ====
+1       SUCCESS              *538365252369 (31.19%) [27 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711699072.log
+Patch file: _magpie_logs/minisat_1711699072.patch
+Diff file: _magpie_logs/minisat_1711699072.diff
+Best fitness: 538365252369
+Best patch: ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 139)) | IfDeletion(('core/Solver.cc.xml', 'if', 50)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 80)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 107)) | IfDeletion(('core/Solver.cc.xml', 'if', 28)) | ForDeletion(('core/Solver.cc.xml', 'for', 20)) | IfDeletion(('core/Solver.cc.xml', 'if', 46)) | DeclStmtInsertion(('core/Solver.cc.xml', '_inter_block', 283), ('core/Solver.cc.xml', 'decl_stmt', 27)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 32)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 87)) | IfDeletion(('core/Solver.cc.xml', 'if', 63)) | ForDeletion(('core/Solver.cc.xml', 'for', 0)) | IfDeletion(('core/Solver.cc.xml', 'if', 8)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 150)) | BreakReplacement(('core/Solver.cc.xml', 'break', 1), ('core/Solver.cc.xml', 'stmt', 64)) | DeclStmtInsertion(('core/Solver.cc.xml', '_inter_block', 485), ('core/Solver.cc.xml', 'decl_stmt', 55)) | DeclStmtInsertion(('core/Solver.cc.xml', '_inter_block', 168), ('core/Solver.cc.xml', 'decl_stmt', 12)) | IfInsertion(('core/Solver.cc.xml', '_inter_block', 160), ('core/Solver.cc.xml', 'if', 0)) | ReturnDeletion(('core/Solver.cc.xml', 'return', 23)) | ForDeletion(('core/Solver.cc.xml', 'for', 26)) | IfDeletion(('core/Solver.cc.xml', 'if', 12)) | DeclStmtInsertion(('core/Solver.cc.xml', '_inter_block', 334), ('core/Solver.cc.xml', 'decl_stmt', 71)) | IfDeletion(('core/Solver.cc.xml', 'if', 62)) | BreakReplacement(('core/Solver.cc.xml', 'break', 1), ('core/Solver.cc.xml', 'stmt', 1)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 86)) | IfDeletion(('core/Solver.cc.xml', 'if', 9)) | DeclStmtInsertion(('core/Solver.cc.xml', '_inter_block', 26), ('core/Solver.cc.xml', 'decl_stmt', 39))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -134,22 +134,13 @@
+     assert(decisionLevel() == 0);
+     if (!ok) /*auto*/{
+       return false;
++      Lit            p   = trail[qhead++];
+     }/*auto*/
+ 
+     // Check if clause is satisfied and remove false/duplicate literals:
+     sort(ps);
+     Lit p; int i, j;
+-    for (i = j = 0, p = lit_Undef; i < ps.size(); i++)
+-        /*auto*/{
+-            if (value(ps[i]) == l_True || ps[i] == ~p)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
+-        else if (value(ps[i]) != l_False && ps[i] != p)
+-            /*auto*/{
+-                ps[j++] = p = ps[i];
+-            }/*auto*/
+-        }/*auto*/
++    
+     ps.shrink(i - j);
+ 
+     if (ps.size() == 0)
+@@ -211,21 +202,16 @@
+     Clause& c = ca[cr];
+     detachClause(cr);
+     // Don't leave pointers to free'd memory!
+-    if (locked(c)) /*auto*/{
+-      vardata[var(c[0])].reason = CRef_Undef;
+-    }/*auto*/
++    
+     c.mark(1); 
+-    ca.free(cr);
++    
+ }
+ 
+ 
+ bool Solver::satisfied(const Clause& c) const {
+     for (int i = 0; i < c.size(); i++)
+         /*auto*/{
+-            if (value(c[i]) == l_True)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
++            
+         }/*auto*/
+     return false; }
+ 
+@@ -257,12 +243,7 @@
+     Var next = var_Undef;
+ 
+     // Random decision:
+-    if (drand(random_seed) < random_var_freq && !order_heap.empty()){
+-        next = order_heap[irand(random_seed,order_heap.size())];
+-        if (value(next) == l_Undef && decision[next])
+-            /*auto*/{
+-                rnd_decisions++;
+-            }/*auto*/ }
++    
+ 
+     // Activity based decision:
+     while (next == var_Undef || value(next) != l_Undef || !decision[next])
+@@ -362,6 +343,9 @@
+             /*auto*/{
+                 if (reason(var(out_learnt[i])) == CRef_Undef || !litRedundant(out_learnt[i], abstract_level))
+                 /*auto*/{
++                    if (!ok) /*auto*/{
++                      return false;
++                    }/*auto*/
+                     out_learnt[j++] = out_learnt[i];
+                 }/*auto*/
+             }/*auto*/
+@@ -373,6 +357,7 @@
+             if (reason(x) == CRef_Undef)
+                 /*auto*/{
+                     out_learnt[j++] = out_learnt[i];
++                    int v = nVars();
+                 }/*auto*/
+             else{
+                 Clause& c = ca[reason(var(out_learnt[i]))];
+@@ -467,7 +452,7 @@
+ void Solver::analyzeFinal(Lit p, vec<Lit>& out_conflict)
+ {
+     out_conflict.clear();
+-    out_conflict.push(p);
++    
+ 
+     if (decisionLevel() == 0)
+         /*auto*/{
+@@ -478,31 +463,16 @@
+ 
+     for (int i = trail.size()-1; i >= trail_lim[0]; i--){
+         Var x = var(trail[i]);
+-        if (seen[x]){
+-            if (reason(x) == CRef_Undef){
+-                assert(level(x) > 0);
+-                out_conflict.push(~trail[i]);
+-            }else{
+-                Clause& c = ca[reason(x)];
+-                for (int j = 1; j < c.size(); j++)
+-                    /*auto*/{
+-                        if (level(var(c[j])) > 0)
+-                        /*auto*/{
+-                            seen[var(c[j])] = 1;
+-                        }/*auto*/
+-                    }/*auto*/
+-            }
+-            seen[x] = 0;
+-        }
+-    }
+-
+-    seen[var(p)] = 0;
++        
++    }
++
++    
+ }
+ 
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -544,6 +514,7 @@
+             Lit      false_lit = ~p;
+             if (c[0] == false_lit)
+                 /*auto*/{
++                    uint32_t abstract_level = 0;
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+             assert(c[1] == false_lit);
+@@ -583,7 +554,7 @@
+         }
+         ws.shrink(i - j);
+     }
+-    propagations += num_props;
++    
+     simpDB_props -= num_props;
+ 
+     return confl;
+@@ -640,6 +611,7 @@
+         else
+             /*auto*/{
+                 cs[j++] = cs[i];
++                vec<Var> map;
+             }/*auto*/
+     }
+     cs.shrink(i - j);
+@@ -743,20 +715,14 @@
+             }
+ 
+             varDecayActivity();
+-            claDecayActivity();
++            
+ 
+             if (--learntsize_adjust_cnt == 0){
+                 learntsize_adjust_confl *= learntsize_adjust_inc;
+                 learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
+                 max_learnts             *= learntsize_inc;
+ 
+-                if (verbosity >= 1)
+-                    /*auto*/{
+-                        printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+-                           (int)conflicts, 
+-                           (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+-                           (int)max_learnts, nLearnts(), (double)learnts_literals/nLearnts(), progressEstimate()*100);
+-                    }/*auto*/
++                
+             }
+ 
+         }else{
+@@ -783,21 +749,12 @@
+             while (decisionLevel() < assumptions.size()){
+                 // Perform user provided assumption:
+                 Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
++                
+             }
+ 
+             if (next == lit_Undef){
+                 // New variable decision:
+-                decisions++;
++                
+                 next = pickBranchLit();
+ 
+                 if (next == lit_Undef)
+@@ -820,11 +777,7 @@
+     double  progress = 0;
+     double  F = 1.0 / nVars();
+ 
+-    for (int i = 0; i <= decisionLevel(); i++){
+-        int beg = i == 0 ? 0 : trail_lim[i - 1];
+-        int end = i == decisionLevel() ? trail.size() : trail_lim[i];
+-        progress += pow(F, i) * (end - beg);
+-    }
++    
+ 
+     return progress / nVars();
+ }
+@@ -856,7 +809,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+@@ -905,6 +858,7 @@
+         for (int i = 0; i < nVars(); i++) /*auto*/{
+             model[i] = value(i);
+         }/*auto*/
++        int         backtrack_level;
+     }else if (status == l_False && conflict.size() == 0)
+         /*auto*/{
+             ok = false;
+@@ -937,10 +891,7 @@
+ 
+     for (int i = 0; i < c.size(); i++)
+         /*auto*/{
+-            if (value(c[i]) != l_False)
+-            /*auto*/{
+-                fprintf(f, "%s%d ", sign(c[i]) ? "-" : "", mapVar(var(c[i]), map, max)+1);
+-            }/*auto*/
++            
+         }/*auto*/
+     fprintf(f, "0\n");
+ }
+@@ -949,10 +900,7 @@
+ void Solver::toDimacs(const char *file, const vec<Lit>& assumps)
+ {
+     FILE* f = fopen(file, "wr");
+-    if (f == NULL)
+-        /*auto*/{
+-            fprintf(stderr, "could not open file %s\n", file), exit(1);
+-        }/*auto*/
++    
+     toDimacs(f, assumps);
+     fclose(f);
+ }
+@@ -983,13 +931,7 @@
+         
+                if (!satisfied(ca[clauses[i]])){
+             Clause& c = ca[clauses[i]];
+-            for (int j = 0; j < c.size(); j++)
+-                /*auto*/{
+-                    if (value(c[j]) != l_False)
+-                    /*auto*/{
+-                        mapVar(var(c[j]), map, max);
+-                    }/*auto*/
+-                }/*auto*/
++            
+         }
+         
+     }/*auto*/
+
+==== WARMUP ====
+WARM    SUCCESS               1710941427378           
+WARM    SUCCESS               1710941440661           
+WARM    SUCCESS               1710940372531           
+WARM    SUCCESS               1710947391053           
+WARM    SUCCESS               1710938121903           
+WARM    SUCCESS               1710939903978           
+WARM    SUCCESS               1710937539167           
+WARM    SUCCESS               1710943455139           
+WARM    SUCCESS               1710935837959           
+WARM    SUCCESS               1710936341794           
+INITIAL SUCCESS               1710940372531           
+==== START: ValidTest ====
+1       SUCCESS              *544963930904 (31.85%) [12 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711704770.log
+Patch file: _magpie_logs/minisat_1711704770.patch
+Diff file: _magpie_logs/minisat_1711704770.diff
+Best fitness: 544963930904
+Best patch: ReturnDeletion(('core/Solver.cc.xml', 'return', 23)) | IfInsertion(('core/Solver.cc.xml', '_inter_block', 390), ('core/Solver.cc.xml', 'if', 49)) | ForDeletion(('core/Solver.cc.xml', 'for', 4)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 95)) | IfDeletion(('core/Solver.cc.xml', 'if', 49)) | IfDeletion(('core/Solver.cc.xml', 'if', 9)) | IfDeletion(('core/Solver.cc.xml', 'if', 46)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 92)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 91)) | BreakInsertion(('core/Solver.cc.xml', '_inter_block', 210), ('core/Solver.cc.xml', 'break', 3)) | BreakInsertion(('core/Solver.cc.xml', '_inter_block', 204), ('core/Solver.cc.xml', 'break', 3)) | DeclStmtInsertion(('core/Solver.cc.xml', '_inter_block', 251), ('core/Solver.cc.xml', 'decl_stmt', 30))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -222,10 +222,7 @@
+ bool Solver::satisfied(const Clause& c) const {
+     for (int i = 0; i < c.size(); i++)
+         /*auto*/{
+-            if (value(c[i]) == l_True)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
++            
+         }/*auto*/
+     return false; }
+ 
+@@ -353,10 +350,7 @@
+     out_learnt.copyTo(analyze_toclear);
+     if (ccmin_mode == 2){
+         uint32_t abstract_level = 0;
+-        for (i = 1; i < out_learnt.size(); i++)
+-            /*auto*/{
+-                abstract_level |= abstractLevel(var(out_learnt[i]));
+-            }/*auto*/ // (maintain an abstraction of levels involved in conflict)
++         // (maintain an abstraction of levels involved in conflict)
+ 
+         for (i = j = 1; i < out_learnt.size(); i++)
+             /*auto*/{
+@@ -436,6 +430,7 @@
+             Lit p  = c[i];
+             if (!seen[var(p)] && level(var(p)) > 0){
+                 if (reason(var(p)) != CRef_Undef && (abstractLevel(var(p)) & abstract_levels) != 0){
++                    break;
+                     seen[var(p)] = 1;
+                     analyze_stack.push(p);
+                     analyze_toclear.push(p);
+@@ -449,6 +444,7 @@
+                 }
+             }
+         }
++        break;
+     }
+ 
+     return true;
+@@ -523,14 +519,15 @@
+ CRef Solver::propagate()
+ {
+     CRef    confl     = CRef_Undef;
++    int max_i = 1;
+     int     num_props = 0;
+-    watches.cleanAll();
++    
+ 
+     while (qhead < trail.size()){
+         Lit            p   = trail[qhead++];     // 'p' is enqueued fact to propagate.
+         vec<Watcher>&  ws  = watches[p];
+         Watcher        *i, *j, *end;
+-        num_props++;
++        
+ 
+         for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){
+             // Try to avoid inspecting the clause:
+@@ -546,7 +543,7 @@
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -740,6 +737,11 @@
+                 attachClause(cr);
+                 claBumpActivity(ca[cr]);
+                 uncheckedEnqueue(learnt_clause[0], cr);
++                if (learnts.size()-nAssigns() >= max_learnts)
++                    // Reduce the set of learnt clauses:
++                    /*auto*/{
++                        reduceDB();
++                    }/*auto*/
+             }
+ 
+             varDecayActivity();
+@@ -750,13 +752,7 @@
+                 learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
+                 max_learnts             *= learntsize_inc;
+ 
+-                if (verbosity >= 1)
+-                    /*auto*/{
+-                        printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+-                           (int)conflicts, 
+-                           (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+-                           (int)max_learnts, nLearnts(), (double)learnts_literals/nLearnts(), progressEstimate()*100);
+-                    }/*auto*/
++                
+             }
+ 
+         }else{
+@@ -773,11 +769,7 @@
+                     return l_False;
+                 }/*auto*/
+ 
+-            if (learnts.size()-nAssigns() >= max_learnts)
+-                // Reduce the set of learnt clauses:
+-                /*auto*/{
+-                    reduceDB();
+-                }/*auto*/
++            
+ 
+             Lit next = lit_Undef;
+             while (decisionLevel() < assumptions.size()){
+@@ -856,7 +848,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+
+==== WARMUP ====
+WARM    SUCCESS               1710927652662           
+WARM    SUCCESS               1710938789727           
+WARM    SUCCESS               1710932637022           
+WARM    SUCCESS               1710936174592           
+WARM    SUCCESS               1710940359248           
+WARM    SUCCESS               1710943911423           
+WARM    SUCCESS               1710942909815           
+WARM    SUCCESS               1710932520227           
+WARM    SUCCESS               1710929101154           
+WARM    SUCCESS               1710937256027           
+INITIAL SUCCESS               1710937256027           
+==== START: ValidTest ====
+1       SUCCESS              *580518043831 (33.93%) [12 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711710428.log
+Patch file: _magpie_logs/minisat_1711710428.patch
+Diff file: _magpie_logs/minisat_1711710428.diff
+Best fitness: 580518043831
+Best patch: ReturnInsertion(('core/Solver.cc.xml', '_inter_block', 55), ('core/Solver.cc.xml', 'return', 20)) | ForReplacement(('core/Solver.cc.xml', 'for', 20), ('core/Solver.cc.xml', 'stmt', 16)) | IfReplacement(('core/Solver.cc.xml', 'if', 50), ('core/Solver.cc.xml', 'stmt', 245)) | ReturnDeletion(('core/Solver.cc.xml', 'return', 23)) | ReturnInsertion(('core/Solver.cc.xml', '_inter_block', 315), ('core/Solver.cc.xml', 'return', 16)) | IfDeletion(('core/Solver.cc.xml', 'if', 11)) | ForDeletion(('core/Solver.cc.xml', 'for', 1)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 44)) | IfInsertion(('core/Solver.cc.xml', '_inter_block', 169), ('core/Solver.cc.xml', 'if', 23)) | WhileDeletion(('core/Solver.cc.xml', 'while', 5)) | ReturnInsertion(('core/Solver.cc.xml', '_inter_block', 571), ('core/Solver.cc.xml', 'return', 19)) | IfDeletion(('core/Solver.cc.xml', 'if', 39))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -194,6 +194,7 @@
+         watches.smudge(~c[0]);
+         watches.smudge(~c[1]);
+     }
++    return l_False;
+ 
+     if (c.learnt()) /*auto*/{
+     
+@@ -220,13 +221,7 @@
+ 
+ 
+ bool Solver::satisfied(const Clause& c) const {
+-    for (int i = 0; i < c.size(); i++)
+-        /*auto*/{
+-            if (value(c[i]) == l_True)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
+-        }/*auto*/
++    
+     return false; }
+ 
+ 
+@@ -237,10 +232,7 @@
+         for (int c = trail.size()-1; c >= trail_lim[level]; c--){
+             Var      x  = var(trail[c]);
+             assigns [x] = l_Undef;
+-            if (phase_saving > 1 || (phase_saving == 1) && c > trail_lim.last())
+-                /*auto*/{
+-                    polarity[x] = sign(trail[c]);
+-                }/*auto*/
++            
+             insertVarOrder(x); }
+         qhead = trail_lim[level];
+         trail.shrink(trail.size() - trail_lim[level]);
+@@ -308,7 +300,7 @@
+     int index   = trail.size() - 1;
+ 
+     do{
+-        assert(confl != CRef_Undef); // (otherwise should be UIP)
++         // (otherwise should be UIP)
+         Clause& c = ca[confl];
+ 
+         if (c.learnt())
+@@ -375,6 +367,26 @@
+                     out_learnt[j++] = out_learnt[i];
+                 }/*auto*/
+             else{
++                if (out_learnt.size() == 1)
++                    /*auto*/{
++                        out_btlevel = 0;
++                    }/*auto*/
++                else{
++                    int max_i = 1;
++                    // Find the first literal assigned at the next-highest level:
++                    for (int i = 2; i < out_learnt.size(); i++)
++                        /*auto*/{
++                            if (level(var(out_learnt[i])) > level(var(out_learnt[max_i])))
++                            /*auto*/{
++                                max_i = i;
++                            }/*auto*/
++                        }/*auto*/
++                    // Swap-in this literal at index 1:
++                    Lit p             = out_learnt[max_i];
++                    out_learnt[max_i] = out_learnt[1];
++                    out_learnt[1]     = p;
++                    out_btlevel       = level(var(p));
++                }
+                 Clause& c = ca[reason(var(out_learnt[i]))];
+                 for (int k = 1; k < c.size(); k++)
+                     /*auto*/{
+@@ -624,6 +636,7 @@
+             }/*auto*/
+     }
+     learnts.shrink(i - j);
++    return true;
+     checkGarbage();
+ }
+ 
+@@ -672,10 +685,7 @@
+ {
+     assert(decisionLevel() == 0);
+ 
+-    if (!ok || propagate() != CRef_Undef)
+-        /*auto*/{
+-            return ok = false;
+-        }/*auto*/
++    
+ 
+     if (nAssigns() == simpDB_assigns || (simpDB_props > 0))
+         /*auto*/{
+@@ -780,20 +790,7 @@
+                 }/*auto*/
+ 
+             Lit next = lit_Undef;
+-            while (decisionLevel() < assumptions.size()){
+-                // Perform user provided assumption:
+-                Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
+-            }
++            
+ 
+             if (next == lit_Undef){
+                 // New variable decision:
+@@ -820,11 +817,7 @@
+     double  progress = 0;
+     double  F = 1.0 / nVars();
+ 
+-    for (int i = 0; i <= decisionLevel(); i++){
+-        int beg = i == 0 ? 0 : trail_lim[i - 1];
+-        int end = i == decisionLevel() ? trail.size() : trail_lim[i];
+-        progress += pow(F, i) * (end - beg);
+-    }
++    static DoubleOption  opt_restart_inc       (_cat, "rinc",        "Restart interval increase factor", 2, DoubleRange(1, false, HUGE_VAL, false));
+ 
+     return progress / nVars();
+ }
+@@ -856,7 +849,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+@@ -1073,6 +1066,7 @@
+ {
+     // Initialize the next region to a size corresponding to the estimated utilization degree. This
+     // is not precise but should avoid some unnecessary reallocations for the new region:
++    return l_False;
+     ClauseAllocator to(ca.size() - ca.wasted()); 
+ 
+     relocAll(to);
+
+==== WARMUP ====
+WARM    SUCCESS               1710927324059           
+WARM    SUCCESS               1710940272100           
+WARM    SUCCESS               1710935109341           
+WARM    SUCCESS               1710938382800           
+WARM    SUCCESS               1710948722235           
+WARM    SUCCESS               1710937631231           
+WARM    SUCCESS               1710941400006           
+WARM    SUCCESS               1710940960767           
+WARM    SUCCESS               1710930366968           
+WARM    SUCCESS               1710936928172           
+INITIAL SUCCESS               1710938382800           
+==== START: ValidTest ====
+1       SUCCESS              *525330719014 (30.7%) [9 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711716097.log
+Patch file: _magpie_logs/minisat_1711716097.patch
+Diff file: _magpie_logs/minisat_1711716097.diff
+Best fitness: 525330719014
+Best patch: ReturnDeletion(('core/Solver.cc.xml', 'return', 23)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 11)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 139)) | ReturnInsertion(('core/Solver.cc.xml', '_inter_block', 324), ('core/Solver.cc.xml', 'return', 3)) | ForDeletion(('core/Solver.cc.xml', 'for', 34)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 44)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 32)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 87)) | IfDeletion(('core/Solver.cc.xml', 'if', 46))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -137,7 +137,7 @@
+     }/*auto*/
+ 
+     // Check if clause is satisfied and remove false/duplicate literals:
+-    sort(ps);
++    
+     Lit p; int i, j;
+     for (i = j = 0, p = lit_Undef; i < ps.size(); i++)
+         /*auto*/{
+@@ -215,7 +215,7 @@
+       vardata[var(c[0])].reason = CRef_Undef;
+     }/*auto*/
+     c.mark(1); 
+-    ca.free(cr);
++    
+ }
+ 
+ 
+@@ -308,7 +308,7 @@
+     int index   = trail.size() - 1;
+ 
+     do{
+-        assert(confl != CRef_Undef); // (otherwise should be UIP)
++         // (otherwise should be UIP)
+         Clause& c = ca[confl];
+ 
+         if (c.learnt())
+@@ -502,7 +502,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -630,6 +630,7 @@
+ 
+ void Solver::removeSatisfied(vec<CRef>& cs)
+ {
++    return ok = false;
+     int i, j;
+     for (i = j = 0; i < cs.size(); i++){
+         Clause& c = ca[cs[i]];
+@@ -743,20 +744,14 @@
+             }
+ 
+             varDecayActivity();
+-            claDecayActivity();
++            
+ 
+             if (--learntsize_adjust_cnt == 0){
+                 learntsize_adjust_confl *= learntsize_adjust_inc;
+                 learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
+                 max_learnts             *= learntsize_inc;
+ 
+-                if (verbosity >= 1)
+-                    /*auto*/{
+-                        printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+-                           (int)conflicts, 
+-                           (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+-                           (int)max_learnts, nLearnts(), (double)learnts_literals/nLearnts(), progressEstimate()*100);
+-                    }/*auto*/
++                
+             }
+ 
+         }else{
+@@ -856,7 +851,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+@@ -1062,10 +1057,7 @@
+ 
+     // All original:
+     //
+-    for (int i = 0; i < clauses.size(); i++)
+-        /*auto*/{
+-            ca.reloc(clauses[i], to);
+-        }/*auto*/
++    
+ }
+ 
+ 
+
+==== WARMUP ====
+WARM    SUCCESS               1710930743022           
+WARM    SUCCESS               1710946577606           
+WARM    SUCCESS               1710933103318           
+WARM    SUCCESS               1710935354508           
+WARM    SUCCESS               1710931605093           
+WARM    SUCCESS               1710939157278           
+WARM    SUCCESS               1710943897555           
+WARM    SUCCESS               1710939202203           
+WARM    SUCCESS               1710943353611           
+WARM    SUCCESS               1710938191816           
+INITIAL SUCCESS               1710939157278           
+==== START: ValidTest ====
+1       SUCCESS              *538827310821 (31.49%) [19 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711721750.log
+Patch file: _magpie_logs/minisat_1711721750.patch
+Diff file: _magpie_logs/minisat_1711721750.diff
+Best fitness: 538827310821
+Best patch: ReturnDeletion(('core/Solver.cc.xml', 'return', 23)) | IfDeletion(('core/Solver.cc.xml', 'if', 11)) | IfDeletion(('core/Solver.cc.xml', 'if', 48)) | IfDeletion(('core/Solver.cc.xml', 'if', 12)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 95)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 92)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 72)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 113)) | BreakDeletion(('core/Solver.cc.xml', 'break', 2)) | IfDeletion(('core/Solver.cc.xml', 'if', 46)) | IfDeletion(('core/Solver.cc.xml', 'if', 7)) | ForDeletion(('core/Solver.cc.xml', 'for', 0)) | GotoInsertion(('core/Solver.cc.xml', '_inter_block', 257), ('core/Solver.cc.xml', 'goto', 0)) | IfDeletion(('core/Solver.cc.xml', 'if', 8)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 141)) | ReturnDeletion(('core/Solver.cc.xml', 'return', 6)) | IfDeletion(('core/Solver.cc.xml', 'if', 5)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 87)) | IfDeletion(('core/Solver.cc.xml', 'if', 65))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -139,17 +139,7 @@
+     // Check if clause is satisfied and remove false/duplicate literals:
+     sort(ps);
+     Lit p; int i, j;
+-    for (i = j = 0, p = lit_Undef; i < ps.size(); i++)
+-        /*auto*/{
+-            if (value(ps[i]) == l_True || ps[i] == ~p)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
+-        else if (value(ps[i]) != l_False && ps[i] != p)
+-            /*auto*/{
+-                ps[j++] = p = ps[i];
+-            }/*auto*/
+-        }/*auto*/
++    
+     ps.shrink(i - j);
+ 
+     if (ps.size() == 0)
+@@ -174,12 +164,7 @@
+     assert(c.size() > 1);
+     watches[~c[0]].push(Watcher(cr, c[1]));
+     watches[~c[1]].push(Watcher(cr, c[0]));
+-    if (c.learnt()) /*auto*/{
+-      learnts_literals += c.size();
+-    }/*auto*/
+-    else            /*auto*/{
+-      clauses_literals += c.size();
+-    }/*auto*/ }
++     }
+ 
+ 
+ void Solver::detachClause(CRef cr, bool strict) {
+@@ -195,25 +180,14 @@
+         watches.smudge(~c[1]);
+     }
+ 
+-    if (c.learnt()) /*auto*/{
+-    
+-           learnts_literals -= c.size();
+-    
+-    }/*auto*/
+-    else            /*auto*/{
+-    
+-           clauses_literals -= c.size();
+-    
+-    }/*auto*/ }
++     }
+ 
+ 
+ void Solver::removeClause(CRef cr) {
+     Clause& c = ca[cr];
+     detachClause(cr);
+     // Don't leave pointers to free'd memory!
+-    if (locked(c)) /*auto*/{
+-      vardata[var(c[0])].reason = CRef_Undef;
+-    }/*auto*/
++    
+     c.mark(1); 
+     ca.free(cr);
+ }
+@@ -224,7 +198,7 @@
+         /*auto*/{
+             if (value(c[i]) == l_True)
+             /*auto*/{
+-                return true;
++                
+             }/*auto*/
+         }/*auto*/
+     return false; }
+@@ -237,10 +211,7 @@
+         for (int c = trail.size()-1; c >= trail_lim[level]; c--){
+             Var      x  = var(trail[c]);
+             assigns [x] = l_Undef;
+-            if (phase_saving > 1 || (phase_saving == 1) && c > trail_lim.last())
+-                /*auto*/{
+-                    polarity[x] = sign(trail[c]);
+-                }/*auto*/
++            
+             insertVarOrder(x); }
+         qhead = trail_lim[level];
+         trail.shrink(trail.size() - trail_lim[level]);
+@@ -257,12 +228,7 @@
+     Var next = var_Undef;
+ 
+     // Random decision:
+-    if (drand(random_seed) < random_var_freq && !order_heap.empty()){
+-        next = order_heap[irand(random_seed,order_heap.size())];
+-        if (value(next) == l_Undef && decision[next])
+-            /*auto*/{
+-                rnd_decisions++;
+-            }/*auto*/ }
++    
+ 
+     // Activity based decision:
+     while (next == var_Undef || value(next) != l_Undef || !decision[next])
+@@ -429,7 +395,7 @@
+     analyze_stack.clear(); analyze_stack.push(p);
+     int top = analyze_toclear.size();
+     while (analyze_stack.size() > 0){
+-        assert(reason(var(analyze_stack.last())) != CRef_Undef);
++        
+         Clause& c = ca[reason(var(analyze_stack.last()))]; analyze_stack.pop();
+ 
+         for (int i = 1; i < c.size(); i++){
+@@ -502,7 +468,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -530,7 +496,7 @@
+         Lit            p   = trail[qhead++];     // 'p' is enqueued fact to propagate.
+         vec<Watcher>&  ws  = watches[p];
+         Watcher        *i, *j, *end;
+-        num_props++;
++        
+ 
+         for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){
+             // Try to avoid inspecting the clause:
+@@ -546,7 +512,7 @@
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -587,6 +553,7 @@
+     simpDB_props -= num_props;
+ 
+     return confl;
++    goto NextClause;
+ }
+ 
+ 
+@@ -624,7 +591,7 @@
+             }/*auto*/
+     }
+     learnts.shrink(i - j);
+-    checkGarbage();
++    
+ }
+ 
+ 
+@@ -747,16 +714,10 @@
+ 
+             if (--learntsize_adjust_cnt == 0){
+                 learntsize_adjust_confl *= learntsize_adjust_inc;
+-                learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
++                
+                 max_learnts             *= learntsize_inc;
+ 
+-                if (verbosity >= 1)
+-                    /*auto*/{
+-                        printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+-                           (int)conflicts, 
+-                           (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+-                           (int)max_learnts, nLearnts(), (double)learnts_literals/nLearnts(), progressEstimate()*100);
+-                    }/*auto*/
++                
+             }
+ 
+         }else{
+@@ -768,10 +729,7 @@
+                 return l_Undef; }
+ 
+             // Simplify the set of problem clauses:
+-            if (decisionLevel() == 0 && !simplify())
+-                /*auto*/{
+-                    return l_False;
+-                }/*auto*/
++            
+ 
+             if (learnts.size()-nAssigns() >= max_learnts)
+                 // Reduce the set of learnt clauses:
+@@ -791,7 +749,7 @@
+                     return l_False;
+                 }else{
+                     next = p;
+-                    break;
++                    
+                 }
+             }
+ 
+@@ -856,7 +814,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+@@ -972,10 +930,7 @@
+     int cnt = 0;
+     for (int i = 0; i < clauses.size(); i++)
+         /*auto*/{
+-            if (!satisfied(ca[clauses[i]]))
+-            /*auto*/{
+-                cnt++;
+-            }/*auto*/
++            
+         }/*auto*/
+         
+     for (int i = 0; i < clauses.size(); i++)
+
+==== WARMUP ====
+WARM    SUCCESS               1714044287538           
+WARM    SUCCESS               1714046032964           
+WARM    SUCCESS               1714040519180           
+WARM    SUCCESS               1714036472170           
+WARM    SUCCESS               1714038680825           
+WARM    SUCCESS               1714046883276           
+WARM    SUCCESS               1714042375337           
+WARM    SUCCESS               1714041496747           
+WARM    SUCCESS               1714044764891           
+WARM    SUCCESS               1714038198954           
+INITIAL SUCCESS               1714042375337           
+==== START: ValidTest ====
+1       SUCCESS              *636069991899 (37.11%) [11 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711727396.log
+Patch file: _magpie_logs/minisat_1711727396.patch
+Diff file: _magpie_logs/minisat_1711727396.diff
+Best fitness: 636069991899
+Best patch: ReturnDeletion(('core/Solver.cc.xml', 'return', 23)) | ExprStmtInsertion(('core/Solver.cc.xml', '_inter_block', 184), ('core/Solver.cc.xml', 'expr_stmt', 138)) | ExprStmtInsertion(('core/Solver.cc.xml', '_inter_block', 326), ('core/Solver.cc.xml', 'expr_stmt', 141)) | WhileDeletion(('core/Solver.cc.xml', 'while', 5)) | ReturnDeletion(('core/Solver.cc.xml', 'return', 6)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 113)) | ReturnInsertion(('core/Solver.cc.xml', '_inter_block', 543), ('core/Solver.cc.xml', 'return', 20)) | ReturnInsertion(('core/Solver.cc.xml', '_inter_block', 63), ('core/Solver.cc.xml', 'return', 18)) | IfReplacement(('core/Solver.cc.xml', 'if', 46), ('core/Solver.cc.xml', 'stmt', 26)) | ForDeletion(('core/Solver.cc.xml', 'for', 0)) | BreakInsertion(('core/Solver.cc.xml', '_inter_block', 165), ('core/Solver.cc.xml', 'break', 2))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -139,17 +139,7 @@
+     // Check if clause is satisfied and remove false/duplicate literals:
+     sort(ps);
+     Lit p; int i, j;
+-    for (i = j = 0, p = lit_Undef; i < ps.size(); i++)
+-        /*auto*/{
+-            if (value(ps[i]) == l_True || ps[i] == ~p)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
+-        else if (value(ps[i]) != l_False && ps[i] != p)
+-            /*auto*/{
+-                ps[j++] = p = ps[i];
+-            }/*auto*/
+-        }/*auto*/
++    
+     ps.shrink(i - j);
+ 
+     if (ps.size() == 0)
+@@ -197,6 +187,7 @@
+ 
+     if (c.learnt()) /*auto*/{
+     
++           return l_Undef;
+            learnts_literals -= c.size();
+     
+     }/*auto*/
+@@ -224,7 +215,7 @@
+         /*auto*/{
+             if (value(c[i]) == l_True)
+             /*auto*/{
+-                return true;
++                
+             }/*auto*/
+         }/*auto*/
+     return false; }
+@@ -369,6 +360,7 @@
+     }else if (ccmin_mode == 1){
+         for (i = j = 1; i < out_learnt.size(); i++){
+             Var x = var(out_learnt[i]);
++            break;
+ 
+             if (reason(x) == CRef_Undef)
+                 /*auto*/{
+@@ -411,6 +403,7 @@
+             }/*auto*/
+         // Swap-in this literal at index 1:
+         Lit p             = out_learnt[max_i];
++        varDecayActivity();
+         out_learnt[max_i] = out_learnt[1];
+         out_learnt[1]     = p;
+         out_btlevel       = level(var(p));
+@@ -624,7 +617,7 @@
+             }/*auto*/
+     }
+     learnts.shrink(i - j);
+-    checkGarbage();
++    
+ }
+ 
+ 
+@@ -642,6 +635,7 @@
+                 cs[j++] = cs[i];
+             }/*auto*/
+     }
++    learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
+     cs.shrink(i - j);
+ }
+ 
+@@ -750,13 +744,7 @@
+                 learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
+                 max_learnts             *= learntsize_inc;
+ 
+-                if (verbosity >= 1)
+-                    /*auto*/{
+-                        printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+-                           (int)conflicts, 
+-                           (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+-                           (int)max_learnts, nLearnts(), (double)learnts_literals/nLearnts(), progressEstimate()*100);
+-                    }/*auto*/
++                Var next = var_Undef;
+             }
+ 
+         }else{
+@@ -780,20 +768,7 @@
+                 }/*auto*/
+ 
+             Lit next = lit_Undef;
+-            while (decisionLevel() < assumptions.size()){
+-                // Perform user provided assumption:
+-                Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
+-            }
++            
+ 
+             if (next == lit_Undef){
+                 // New variable decision:
+@@ -856,7 +831,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+@@ -1002,6 +977,7 @@
+     for (int i = 0; i < assumptions.size(); i++){
+         assert(value(assumptions[i]) != l_False);
+         fprintf(f, "%s%d 0\n", sign(assumptions[i]) ? "-" : "", mapVar(var(assumptions[i]), map, max)+1);
++        return l_False;
+     }
+ 
+     for (int i = 0; i < clauses.size(); i++)
+
+==== WARMUP ====
+WARM    SUCCESS               1714039652987           
+WARM    SUCCESS               1714038726498           
+WARM    SUCCESS               1714032510966           
+WARM    SUCCESS               1714041191881           
+WARM    SUCCESS               1714043962834           
+WARM    SUCCESS               1714037025296           
+WARM    SUCCESS               1714049686047           
+WARM    SUCCESS               1714037742030           
+WARM    SUCCESS               1714043343210           
+WARM    SUCCESS               1714045050844           
+INITIAL SUCCESS               1714041191881           
+==== START: ValidTest ====
+1       SUCCESS              *623065796351 (36.35%) [27 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711733091.log
+Patch file: _magpie_logs/minisat_1711733091.patch
+Diff file: _magpie_logs/minisat_1711733091.diff
+Best fitness: 623065796351
+Best patch: BreakInsertion(('core/Solver.cc.xml', '_inter_block', 415), ('core/Solver.cc.xml', 'break', 0)) | ForDeletion(('core/Solver.cc.xml', 'for', 20)) | ExprStmtReplacement(('core/Solver.cc.xml', 'expr_stmt', 113), ('core/Solver.cc.xml', 'stmt', 410)) | BreakReplacement(('core/Solver.cc.xml', 'break', 1), ('core/Solver.cc.xml', 'stmt', 330)) | ReturnInsertion(('core/Solver.cc.xml', '_inter_block', 346), ('core/Solver.cc.xml', 'return', 16)) | WhileDeletion(('core/Solver.cc.xml', 'while', 5)) | IfDeletion(('core/Solver.cc.xml', 'if', 7)) | WhileInsertion(('core/Solver.cc.xml', '_inter_block', 416), ('core/Solver.cc.xml', 'while', 1)) | BreakDeletion(('core/Solver.cc.xml', 'break', 1)) | IfReplacement(('core/Solver.cc.xml', 'if', 12), ('core/Solver.cc.xml', 'stmt', 236)) | ReturnInsertion(('core/Solver.cc.xml', '_inter_block', 46), ('core/Solver.cc.xml', 'return', 2)) | ContinueInsertion(('core/Solver.cc.xml', '_inter_block', 391), ('core/Solver.cc.xml', 'continue', 1)) | ReturnReplacement(('core/Solver.cc.xml', 'return', 4), ('core/Solver.cc.xml', 'stmt', 21)) | DoInsertion(('core/Solver.cc.xml', '_inter_block', 137), ('core/Solver.cc.xml', 'do', 0)) | ForDeletion(('core/Solver.cc.xml', 'for', 27)) | IfDeletion(('core/Solver.cc.xml', 'if', 48)) | ReturnDeletion(('core/Solver.cc.xml', 'return', 7)) | DoInsertion(('core/Solver.cc.xml', '_inter_block', 65), ('core/Solver.cc.xml', 'do', 0)) | BreakDeletion(('core/Solver.cc.xml', 'break', 3)) | ContinueInsertion(('core/Solver.cc.xml', '_inter_block', 93), ('core/Solver.cc.xml', 'continue', 0)) | IfDeletion(('core/Solver.cc.xml', 'if', 47)) | ForDeletion(('core/Solver.cc.xml', 'for', 0)) | ExprStmtReplacement(('core/Solver.cc.xml', 'expr_stmt', 140), ('core/Solver.cc.xml', 'stmt', 1)) | BreakInsertion(('core/Solver.cc.xml', '_inter_block', 505), ('core/Solver.cc.xml', 'break', 2)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 128)) | IfDeletion(('core/Solver.cc.xml', 'if', 8)) | IfReplacement(('core/Solver.cc.xml', 'if', 39), ('core/Solver.cc.xml', 'stmt', 247))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -139,17 +139,7 @@
+     // Check if clause is satisfied and remove false/duplicate literals:
+     sort(ps);
+     Lit p; int i, j;
+-    for (i = j = 0, p = lit_Undef; i < ps.size(); i++)
+-        /*auto*/{
+-            if (value(ps[i]) == l_True || ps[i] == ~p)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
+-        else if (value(ps[i]) != l_False && ps[i] != p)
+-            /*auto*/{
+-                ps[j++] = p = ps[i];
+-            }/*auto*/
+-        }/*auto*/
++    
+     ps.shrink(i - j);
+ 
+     if (ps.size() == 0)
+@@ -158,7 +148,7 @@
+         }/*auto*/
+     else if (ps.size() == 1){
+         uncheckedEnqueue(ps[0]);
+-        return ok = (propagate() == CRef_Undef);
++        CRef cr = ca.alloc(ps, false);
+     }else{
+         CRef cr = ca.alloc(ps, false);
+         clauses.push(cr);
+@@ -174,6 +164,7 @@
+     assert(c.size() > 1);
+     watches[~c[0]].push(Watcher(cr, c[1]));
+     watches[~c[1]].push(Watcher(cr, c[0]));
++    return true;
+     if (c.learnt()) /*auto*/{
+       learnts_literals += c.size();
+     }/*auto*/
+@@ -195,25 +186,14 @@
+         watches.smudge(~c[1]);
+     }
+ 
+-    if (c.learnt()) /*auto*/{
+-    
+-           learnts_literals -= c.size();
+-    
+-    }/*auto*/
+-    else            /*auto*/{
+-    
+-           clauses_literals -= c.size();
+-    
+-    }/*auto*/ }
++     }
+ 
+ 
+ void Solver::removeClause(CRef cr) {
+     Clause& c = ca[cr];
+     detachClause(cr);
+     // Don't leave pointers to free'd memory!
+-    if (locked(c)) /*auto*/{
+-      vardata[var(c[0])].reason = CRef_Undef;
+-    }/*auto*/
++    
+     c.mark(1); 
+     ca.free(cr);
+ }
+@@ -227,7 +207,7 @@
+                 return true;
+             }/*auto*/
+         }/*auto*/
+-    return false; }
++     }
+ 
+ 
+ // Revert to the state at given level (keeping all assignment at 'level' but not beyond).
+@@ -241,7 +221,8 @@
+                 /*auto*/{
+                     polarity[x] = sign(trail[c]);
+                 }/*auto*/
+-            insertVarOrder(x); }
++            insertVarOrder(x);
++            continue; }
+         qhead = trail_lim[level];
+         trail.shrink(trail.size() - trail_lim[level]);
+         trail_lim.shrink(trail_lim.size() - level);
+@@ -257,12 +238,7 @@
+     Var next = var_Undef;
+ 
+     // Random decision:
+-    if (drand(random_seed) < random_var_freq && !order_heap.empty()){
+-        next = order_heap[irand(random_seed,order_heap.size())];
+-        if (value(next) == l_Undef && decision[next])
+-            /*auto*/{
+-                rnd_decisions++;
+-            }/*auto*/ }
++    decisions++;
+ 
+     // Activity based decision:
+     while (next == var_Undef || value(next) != l_Undef || !decision[next])
+@@ -343,6 +319,44 @@
+         confl = reason(var(p));
+         seen[var(p)] = 0;
+         pathC--;
++        do{
++            assert(confl != CRef_Undef); // (otherwise should be UIP)
++            Clause& c = ca[confl];
++
++            if (c.learnt())
++                /*auto*/{
++                    claBumpActivity(c);
++                }/*auto*/
++
++            for (int j = (p == lit_Undef) ? 0 : 1; j < c.size(); j++){
++                Lit q = c[j];
++
++                if (!seen[var(q)] && level(var(q)) > 0){
++                    varBumpActivity(var(q));
++                    seen[var(q)] = 1;
++                    if (level(var(q)) >= decisionLevel())
++                        /*auto*/{
++                            pathC++;
++                        }/*auto*/
++                    else
++                        /*auto*/{
++                            out_learnt.push(q);
++                        }/*auto*/
++                }
++            }
++            
++            // Select next clause to look at:
++            while (!seen[var(trail[index--])])/*auto*/{
++            
++                         ;
++            
++            }/*auto*/
++            p     = trail[index+1];
++            confl = reason(var(p));
++            seen[var(p)] = 0;
++            pathC--;
++
++        }while (pathC > 0);
+ 
+     }while (pathC > 0);
+     out_learnt[0] = ~p;
+@@ -380,7 +394,7 @@
+                     /*auto*/{
+                         if (!seen[var(c[k])] && level(var(c[k])) > 0){
+                         out_learnt[j++] = out_learnt[i];
+-                        break; }
++                         }
+                     }/*auto*/
+             }
+         }
+@@ -624,7 +638,7 @@
+             }/*auto*/
+     }
+     learnts.shrink(i - j);
+-    checkGarbage();
++    return l_Undef;
+ }
+ 
+ 
+@@ -672,15 +686,13 @@
+ {
+     assert(decisionLevel() == 0);
+ 
+-    if (!ok || propagate() != CRef_Undef)
+-        /*auto*/{
+-            return ok = false;
+-        }/*auto*/
++    max_learnts               = nClauses() * learntsize_factor;
+ 
+     if (nAssigns() == simpDB_assigns || (simpDB_props > 0))
+         /*auto*/{
+             return true;
+         }/*auto*/
++    return true;
+ 
+     // Remove satisfied clauses:
+     removeSatisfied(learnts);
+@@ -723,7 +735,7 @@
+         CRef confl = propagate();
+         if (confl != CRef_Undef){
+             // CONFLICT
+-            conflicts++; conflictC++;
++             conflictC++;
+             if (decisionLevel() == 0) /*auto*/{
+                 return l_False;
+             }/*auto*/
+@@ -746,7 +758,8 @@
+             claDecayActivity();
+ 
+             if (--learntsize_adjust_cnt == 0){
+-                learntsize_adjust_confl *= learntsize_adjust_inc;
++                continue;
++                break;
+                 learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
+                 max_learnts             *= learntsize_inc;
+ 
+@@ -761,17 +774,10 @@
+ 
+         }else{
+             // NO CONFLICT
+-            if (nof_conflicts >= 0 && conflictC >= nof_conflicts || !withinBudget()){
+-                // Reached bound on number of conflicts:
+-                progress_estimate = progressEstimate();
+-                cancelUntil(0);
+-                return l_Undef; }
++            
+ 
+             // Simplify the set of problem clauses:
+-            if (decisionLevel() == 0 && !simplify())
+-                /*auto*/{
+-                    return l_False;
+-                }/*auto*/
++            
+ 
+             if (learnts.size()-nAssigns() >= max_learnts)
+                 // Reduce the set of learnt clauses:
+@@ -780,20 +786,7 @@
+                 }/*auto*/
+ 
+             Lit next = lit_Undef;
+-            while (decisionLevel() < assumptions.size()){
+-                // Perform user provided assumption:
+-                Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
+-            }
++            
+ 
+             if (next == lit_Undef){
+                 // New variable decision:
+@@ -820,11 +813,7 @@
+     double  progress = 0;
+     double  F = 1.0 / nVars();
+ 
+-    for (int i = 0; i <= decisionLevel(); i++){
+-        int beg = i == 0 ? 0 : trail_lim[i - 1];
+-        int end = i == decisionLevel() ? trail.size() : trail_lim[i];
+-        progress += pow(F, i) * (end - beg);
+-    }
++    
+ 
+     return progress / nVars();
+ }
+@@ -888,7 +877,7 @@
+         double rest_base = luby_restart ? luby(restart_inc, curr_restarts) : pow(restart_inc, curr_restarts);
+         status = search(rest_base * restart_first);
+         if (!withinBudget()) /*auto*/{
+-            break;
++            
+         }/*auto*/
+         curr_restarts++;
+     }
+@@ -940,6 +929,7 @@
+             if (value(c[i]) != l_False)
+             /*auto*/{
+                 fprintf(f, "%s%d ", sign(c[i]) ? "-" : "", mapVar(var(c[i]), map, max)+1);
++                break;
+             }/*auto*/
+         }/*auto*/
+     fprintf(f, "0\n");
+@@ -999,10 +989,7 @@
+ 
+     fprintf(f, "p cnf %d %d\n", max, cnt);
+ 
+-    for (int i = 0; i < assumptions.size(); i++){
+-        assert(value(assumptions[i]) != l_False);
+-        fprintf(f, "%s%d 0\n", sign(assumptions[i]) ? "-" : "", mapVar(var(assumptions[i]), map, max)+1);
+-    }
++    
+ 
+     for (int i = 0; i < clauses.size(); i++)
+         /*auto*/{
+
+==== WARMUP ====
+WARM    SUCCESS               1714047366568           
+WARM    SUCCESS               1714042910962           
+WARM    SUCCESS               1714047081651           
+WARM    SUCCESS               1714042934805           
+WARM    SUCCESS               1714038243375           
+WARM    SUCCESS               1714041168428           
+WARM    SUCCESS               1714047839171           
+WARM    SUCCESS               1714036205035           
+WARM    SUCCESS               1714036911562           
+WARM    SUCCESS               1714036070836           
+INITIAL SUCCESS               1714042910962           
+==== START: ValidTest ====
+1       SUCCESS              *618128893274 (36.06%) [9 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711738770.log
+Patch file: _magpie_logs/minisat_1711738770.patch
+Diff file: _magpie_logs/minisat_1711738770.diff
+Best fitness: 618128893274
+Best patch: IfDeletion(('core/Solver.cc.xml', 'if', 47)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 113)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 95)) | ExprStmtInsertion(('core/Solver.cc.xml', '_inter_block', 284), ('core/Solver.cc.xml', 'expr_stmt', 163)) | IfDeletion(('core/Solver.cc.xml', 'if', 9)) | WhileDeletion(('core/Solver.cc.xml', 'while', 5)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 118)) | IfDeletion(('core/Solver.cc.xml', 'if', 12)) | IfDeletion(('core/Solver.cc.xml', 'if', 8))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -211,9 +211,7 @@
+     Clause& c = ca[cr];
+     detachClause(cr);
+     // Don't leave pointers to free'd memory!
+-    if (locked(c)) /*auto*/{
+-      vardata[var(c[0])].reason = CRef_Undef;
+-    }/*auto*/
++    
+     c.mark(1); 
+     ca.free(cr);
+ }
+@@ -222,10 +220,7 @@
+ bool Solver::satisfied(const Clause& c) const {
+     for (int i = 0; i < c.size(); i++)
+         /*auto*/{
+-            if (value(c[i]) == l_True)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
++            
+         }/*auto*/
+     return false; }
+ 
+@@ -257,12 +252,7 @@
+     Var next = var_Undef;
+ 
+     // Random decision:
+-    if (drand(random_seed) < random_var_freq && !order_heap.empty()){
+-        next = order_heap[irand(random_seed,order_heap.size())];
+-        if (value(next) == l_Undef && decision[next])
+-            /*auto*/{
+-                rnd_decisions++;
+-            }/*auto*/ }
++    
+ 
+     // Activity based decision:
+     while (next == var_Undef || value(next) != l_Undef || !decision[next])
+@@ -545,8 +535,9 @@
+             if (c[0] == false_lit)
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
++                    learntsize_adjust_cnt     = (int)learntsize_adjust_confl;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -624,7 +615,7 @@
+             }/*auto*/
+     }
+     learnts.shrink(i - j);
+-    checkGarbage();
++    
+ }
+ 
+ 
+@@ -656,7 +647,7 @@
+                 vs.push(v);
+             }/*auto*/
+         }/*auto*/
+-    order_heap.build(vs);
++    
+ }
+ 
+ 
+@@ -761,11 +752,7 @@
+ 
+         }else{
+             // NO CONFLICT
+-            if (nof_conflicts >= 0 && conflictC >= nof_conflicts || !withinBudget()){
+-                // Reached bound on number of conflicts:
+-                progress_estimate = progressEstimate();
+-                cancelUntil(0);
+-                return l_Undef; }
++            
+ 
+             // Simplify the set of problem clauses:
+             if (decisionLevel() == 0 && !simplify())
+@@ -780,20 +767,7 @@
+                 }/*auto*/
+ 
+             Lit next = lit_Undef;
+-            while (decisionLevel() < assumptions.size()){
+-                // Perform user provided assumption:
+-                Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
+-            }
++            
+ 
+             if (next == lit_Undef){
+                 // New variable decision:
+
+==== WARMUP ====
+WARM    SUCCESS               1714042027304           
+WARM    SUCCESS               1714051580601           
+WARM    SUCCESS               1714043146832           
+WARM    SUCCESS               1714042596580           
+WARM    SUCCESS               1714040036509           
+WARM    SUCCESS               1714050693737           
+WARM    SUCCESS               1714034565057           
+WARM    SUCCESS               1714040260035           
+WARM    SUCCESS               1714044390140           
+WARM    SUCCESS               1714044986194           
+INITIAL SUCCESS               1714043146832           
+==== START: ValidTest ====
+1       SUCCESS              *546807899529 (31.9%) [15 edit(s)] 
+==== END ====
+
+==== REPORT ====
+Termination: validation end
+Log file: /home/justyna/damien/projects/magpie/_magpie_logs/minisat_1711744451.log
+Patch file: _magpie_logs/minisat_1711744451.patch
+Diff file: _magpie_logs/minisat_1711744451.diff
+Best fitness: 546807899529
+Best patch: ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 95)) | ReturnDeletion(('core/Solver.cc.xml', 'return', 23)) | ForDeletion(('core/Solver.cc.xml', 'for', 17)) | ExprStmtReplacement(('core/Solver.cc.xml', 'expr_stmt', 32), ('core/Solver.cc.xml', 'stmt', 117)) | IfDeletion(('core/Solver.cc.xml', 'if', 45)) | DeclStmtInsertion(('core/Solver.cc.xml', '_inter_block', 313), ('core/Solver.cc.xml', 'decl_stmt', 39)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 30)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 123)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 92)) | ForDeletion(('core/Solver.cc.xml', 'for', 4)) | IfDeletion(('core/Solver.cc.xml', 'if', 8)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 75)) | ForDeletion(('core/Solver.cc.xml', 'for', 0)) | ExprStmtDeletion(('core/Solver.cc.xml', 'expr_stmt', 76)) | IfDeletion(('core/Solver.cc.xml', 'if', 12))
+Diff:
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -139,17 +139,7 @@
+     // Check if clause is satisfied and remove false/duplicate literals:
+     sort(ps);
+     Lit p; int i, j;
+-    for (i = j = 0, p = lit_Undef; i < ps.size(); i++)
+-        /*auto*/{
+-            if (value(ps[i]) == l_True || ps[i] == ~p)
+-            /*auto*/{
+-                return true;
+-            }/*auto*/
+-        else if (value(ps[i]) != l_False && ps[i] != p)
+-            /*auto*/{
+-                ps[j++] = p = ps[i];
+-            }/*auto*/
+-        }/*auto*/
++    
+     ps.shrink(i - j);
+ 
+     if (ps.size() == 0)
+@@ -211,11 +201,9 @@
+     Clause& c = ca[cr];
+     detachClause(cr);
+     // Don't leave pointers to free'd memory!
+-    if (locked(c)) /*auto*/{
+-      vardata[var(c[0])].reason = CRef_Undef;
+-    }/*auto*/
++    
+     c.mark(1); 
+-    ca.free(cr);
++    c.mark(1);
+ }
+ 
+ 
+@@ -257,12 +245,7 @@
+     Var next = var_Undef;
+ 
+     // Random decision:
+-    if (drand(random_seed) < random_var_freq && !order_heap.empty()){
+-        next = order_heap[irand(random_seed,order_heap.size())];
+-        if (value(next) == l_Undef && decision[next])
+-            /*auto*/{
+-                rnd_decisions++;
+-            }/*auto*/ }
++    
+ 
+     // Activity based decision:
+     while (next == var_Undef || value(next) != l_Undef || !decision[next])
+@@ -353,10 +336,7 @@
+     out_learnt.copyTo(analyze_toclear);
+     if (ccmin_mode == 2){
+         uint32_t abstract_level = 0;
+-        for (i = 1; i < out_learnt.size(); i++)
+-            /*auto*/{
+-                abstract_level |= abstractLevel(var(out_learnt[i]));
+-            }/*auto*/ // (maintain an abstraction of levels involved in conflict)
++         // (maintain an abstraction of levels involved in conflict)
+ 
+         for (i = j = 1; i < out_learnt.size(); i++)
+             /*auto*/{
+@@ -437,8 +417,8 @@
+             if (!seen[var(p)] && level(var(p)) > 0){
+                 if (reason(var(p)) != CRef_Undef && (abstractLevel(var(p)) & abstract_levels) != 0){
+                     seen[var(p)] = 1;
+-                    analyze_stack.push(p);
+-                    analyze_toclear.push(p);
++                    
++                    
+                 }else{
+                     for (int j = top; j < analyze_toclear.size(); j++)
+                         /*auto*/{
+@@ -530,7 +510,7 @@
+         Lit            p   = trail[qhead++];     // 'p' is enqueued fact to propagate.
+         vec<Watcher>&  ws  = watches[p];
+         Watcher        *i, *j, *end;
+-        num_props++;
++        
+ 
+         for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){
+             // Try to avoid inspecting the clause:
+@@ -546,7 +526,7 @@
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -610,6 +590,7 @@
+     double  extra_lim = cla_inc / learnts.size();    // Remove any clause below this activity
+ 
+     sort(learnts, reduceDB_lt(ca));
++    Lit            p   = trail[qhead++];
+     // Don't delete binary or locked clauses. From the rest, delete clauses from the first half
+     // and clauses with activity smaller than 'extra_lim':
+     for (i = j = 0; i < learnts.size(); i++){
+@@ -631,17 +612,7 @@
+ void Solver::removeSatisfied(vec<CRef>& cs)
+ {
+     int i, j;
+-    for (i = j = 0; i < cs.size(); i++){
+-        Clause& c = ca[cs[i]];
+-        if (satisfied(c))
+-            /*auto*/{
+-                removeClause(cs[i]);
+-            }/*auto*/
+-        else
+-            /*auto*/{
+-                cs[j++] = cs[i];
+-            }/*auto*/
+-    }
++    
+     cs.shrink(i - j);
+ }
+ 
+@@ -689,7 +660,7 @@
+             removeSatisfied(clauses);
+         }/*auto*/
+     checkGarbage();
+-    rebuildOrderHeap();
++    
+ 
+     simpDB_assigns = nAssigns();
+     simpDB_props   = clauses_literals + learnts_literals;   // (shouldn't depend on stats really, but it will do for now)
+@@ -745,19 +716,7 @@
+             varDecayActivity();
+             claDecayActivity();
+ 
+-            if (--learntsize_adjust_cnt == 0){
+-                learntsize_adjust_confl *= learntsize_adjust_inc;
+-                learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
+-                max_learnts             *= learntsize_inc;
+-
+-                if (verbosity >= 1)
+-                    /*auto*/{
+-                        printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+-                           (int)conflicts, 
+-                           (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+-                           (int)max_learnts, nLearnts(), (double)learnts_literals/nLearnts(), progressEstimate()*100);
+-                    }/*auto*/
+-            }
++            
+ 
+         }else{
+             // NO CONFLICT
+@@ -856,7 +815,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
+

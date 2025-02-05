@@ -1,0 +1,132 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -195,16 +195,7 @@
+         watches.smudge(~c[1]);
+     }
+ 
+-    if (c.learnt()) /*auto*/{
+-    
+-           learnts_literals -= c.size();
+-    
+-    }/*auto*/
+-    else            /*auto*/{
+-    
+-           clauses_literals -= c.size();
+-    
+-    }/*auto*/ }
++     }
+ 
+ 
+ void Solver::removeClause(CRef cr) {
+@@ -215,7 +206,7 @@
+       vardata[var(c[0])].reason = CRef_Undef;
+     }/*auto*/
+     c.mark(1); 
+-    ca.free(cr);
++    
+ }
+ 
+ 
+@@ -308,11 +299,12 @@
+     int index   = trail.size() - 1;
+ 
+     do{
+-        assert(confl != CRef_Undef); // (otherwise should be UIP)
++         // (otherwise should be UIP)
+         Clause& c = ca[confl];
+ 
+         if (c.learnt())
+             /*auto*/{
++                static IntOption     opt_ccmin_mode        (_cat, "ccmin-mode",  "Controls conflict clause minimization (0=none, 1=basic, 2=deep)", 2, IntRange(0, 2));
+                 claBumpActivity(c);
+             }/*auto*/
+ 
+@@ -418,7 +410,8 @@
+ 
+     for (int j = 0; j < analyze_toclear.size(); j++) /*auto*/{
+       seen[var(analyze_toclear[j])] = 0;
+-    }/*auto*/    // ('seen[]' is now cleared)
++    }/*auto*/
++    learntsize_adjust_confl *= learntsize_adjust_inc;    // ('seen[]' is now cleared)
+ }
+ 
+ 
+@@ -429,7 +422,7 @@
+     analyze_stack.clear(); analyze_stack.push(p);
+     int top = analyze_toclear.size();
+     while (analyze_stack.size() > 0){
+-        assert(reason(var(analyze_stack.last())) != CRef_Undef);
++        
+         Clause& c = ca[reason(var(analyze_stack.last()))]; analyze_stack.pop();
+ 
+         for (int i = 1; i < c.size(); i++){
+@@ -530,7 +523,7 @@
+         Lit            p   = trail[qhead++];     // 'p' is enqueued fact to propagate.
+         vec<Watcher>&  ws  = watches[p];
+         Watcher        *i, *j, *end;
+-        num_props++;
++        
+ 
+         for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){
+             // Try to avoid inspecting the clause:
+@@ -546,7 +539,7 @@
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            int beg = i == 0 ? 0 : trail_lim[i - 1];
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -636,6 +629,7 @@
+         if (satisfied(c))
+             /*auto*/{
+                 removeClause(cs[i]);
++                break;
+             }/*auto*/
+         else
+             /*auto*/{
+@@ -656,7 +650,7 @@
+                 vs.push(v);
+             }/*auto*/
+         }/*auto*/
+-    order_heap.build(vs);
++    
+ }
+ 
+ 
+@@ -761,11 +755,7 @@
+ 
+         }else{
+             // NO CONFLICT
+-            if (nof_conflicts >= 0 && conflictC >= nof_conflicts || !withinBudget()){
+-                // Reached bound on number of conflicts:
+-                progress_estimate = progressEstimate();
+-                cancelUntil(0);
+-                return l_Undef; }
++            
+ 
+             // Simplify the set of problem clauses:
+             if (decisionLevel() == 0 && !simplify())
+@@ -780,20 +770,7 @@
+                 }/*auto*/
+ 
+             Lit next = lit_Undef;
+-            while (decisionLevel() < assumptions.size()){
+-                // Perform user provided assumption:
+-                Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
+-            }
++            
+ 
+             if (next == lit_Undef){
+                 // New variable decision:

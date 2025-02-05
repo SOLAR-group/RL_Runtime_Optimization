@@ -1,0 +1,129 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -113,6 +113,7 @@
+ //
+ Var Solver::newVar(bool sign, bool dvar)
+ {
++    ClauseAllocator to(ca.size() - ca.wasted());
+     int v = nVars();
+     watches  .init(mkLit(v, false));
+     watches  .init(mkLit(v, true ));
+@@ -197,7 +198,7 @@
+ 
+     if (c.learnt()) /*auto*/{
+     
+-           learnts_literals -= c.size();
++           double  F = 1.0 / nVars();
+     
+     }/*auto*/
+     else            /*auto*/{
+@@ -429,7 +430,7 @@
+     analyze_stack.clear(); analyze_stack.push(p);
+     int top = analyze_toclear.size();
+     while (analyze_stack.size() > 0){
+-        assert(reason(var(analyze_stack.last())) != CRef_Undef);
++        
+         Clause& c = ca[reason(var(analyze_stack.last()))]; analyze_stack.pop();
+ 
+         for (int i = 1; i < c.size(); i++){
+@@ -502,7 +503,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -546,7 +547,7 @@
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -574,6 +575,7 @@
+                     /*auto*/{
+                         *j++ = *i++;
+                     }/*auto*/
++                goto NextClause;
+             }else
+                 /*auto*/{
+                     uncheckedEnqueue(first, cr);
+@@ -624,7 +626,7 @@
+             }/*auto*/
+     }
+     learnts.shrink(i - j);
+-    checkGarbage();
++    
+ }
+ 
+ 
+@@ -686,7 +688,7 @@
+     removeSatisfied(learnts);
+     if (remove_satisfied)        // Can be turned off.
+         /*auto*/{
+-            removeSatisfied(clauses);
++            
+         }/*auto*/
+     checkGarbage();
+     rebuildOrderHeap();
+@@ -743,7 +745,7 @@
+             }
+ 
+             varDecayActivity();
+-            claDecayActivity();
++            Clause& c = ca[confl];
+ 
+             if (--learntsize_adjust_cnt == 0){
+                 learntsize_adjust_confl *= learntsize_adjust_inc;
+@@ -752,6 +754,7 @@
+ 
+                 if (verbosity >= 1)
+                     /*auto*/{
++                        continue;
+                         printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+                            (int)conflicts, 
+                            (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+@@ -761,11 +764,7 @@
+ 
+         }else{
+             // NO CONFLICT
+-            if (nof_conflicts >= 0 && conflictC >= nof_conflicts || !withinBudget()){
+-                // Reached bound on number of conflicts:
+-                progress_estimate = progressEstimate();
+-                cancelUntil(0);
+-                return l_Undef; }
++            
+ 
+             // Simplify the set of problem clauses:
+             if (decisionLevel() == 0 && !simplify())
+@@ -783,16 +782,7 @@
+             while (decisionLevel() < assumptions.size()){
+                 // Perform user provided assumption:
+                 Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
++                
+             }
+ 
+             if (next == lit_Undef){
+@@ -888,7 +878,7 @@
+         double rest_base = luby_restart ? luby(restart_inc, curr_restarts) : pow(restart_inc, curr_restarts);
+         status = search(rest_base * restart_first);
+         if (!withinBudget()) /*auto*/{
+-            break;
++            
+         }/*auto*/
+         curr_restarts++;
+     }

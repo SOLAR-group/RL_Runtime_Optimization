@@ -1,0 +1,11 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -856,7 +856,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    x = x % size;
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.

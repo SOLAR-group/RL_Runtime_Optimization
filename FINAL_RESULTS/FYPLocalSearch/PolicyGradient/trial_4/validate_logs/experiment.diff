@@ -1,0 +1,111 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -211,11 +211,9 @@
+     Clause& c = ca[cr];
+     detachClause(cr);
+     // Don't leave pointers to free'd memory!
+-    if (locked(c)) /*auto*/{
+-      vardata[var(c[0])].reason = CRef_Undef;
+-    }/*auto*/
++    
+     c.mark(1); 
+-    ca.free(cr);
++    return false;
+ }
+ 
+ 
+@@ -257,12 +255,7 @@
+     Var next = var_Undef;
+ 
+     // Random decision:
+-    if (drand(random_seed) < random_var_freq && !order_heap.empty()){
+-        next = order_heap[irand(random_seed,order_heap.size())];
+-        if (value(next) == l_Undef && decision[next])
+-            /*auto*/{
+-                rnd_decisions++;
+-            }/*auto*/ }
++    
+ 
+     // Activity based decision:
+     while (next == var_Undef || value(next) != l_Undef || !decision[next])
+@@ -429,7 +422,7 @@
+     analyze_stack.clear(); analyze_stack.push(p);
+     int top = analyze_toclear.size();
+     while (analyze_stack.size() > 0){
+-        assert(reason(var(analyze_stack.last())) != CRef_Undef);
++        
+         Clause& c = ca[reason(var(analyze_stack.last()))]; analyze_stack.pop();
+ 
+         for (int i = 1; i < c.size(); i++){
+@@ -502,7 +495,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -745,19 +738,7 @@
+             varDecayActivity();
+             claDecayActivity();
+ 
+-            if (--learntsize_adjust_cnt == 0){
+-                learntsize_adjust_confl *= learntsize_adjust_inc;
+-                learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
+-                max_learnts             *= learntsize_inc;
+-
+-                if (verbosity >= 1)
+-                    /*auto*/{
+-                        printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+-                           (int)conflicts, 
+-                           (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+-                           (int)max_learnts, nLearnts(), (double)learnts_literals/nLearnts(), progressEstimate()*100);
+-                    }/*auto*/
+-            }
++            
+ 
+         }else{
+             // NO CONFLICT
+@@ -768,10 +749,7 @@
+                 return l_Undef; }
+ 
+             // Simplify the set of problem clauses:
+-            if (decisionLevel() == 0 && !simplify())
+-                /*auto*/{
+-                    return l_False;
+-                }/*auto*/
++            
+ 
+             if (learnts.size()-nAssigns() >= max_learnts)
+                 // Reduce the set of learnt clauses:
+@@ -780,20 +758,7 @@
+                 }/*auto*/
+ 
+             Lit next = lit_Undef;
+-            while (decisionLevel() < assumptions.size()){
+-                // Perform user provided assumption:
+-                Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
+-            }
++            
+ 
+             if (next == lit_Undef){
+                 // New variable decision:
+@@ -853,6 +818,7 @@
+     while (size-1 != x){
+         size = (size-1)>>1;
+         seq--;
++        return false;
+         x = x % size;
+     }
+ 

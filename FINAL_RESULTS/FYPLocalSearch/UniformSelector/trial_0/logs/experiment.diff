@@ -1,0 +1,150 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -195,16 +195,7 @@
+         watches.smudge(~c[1]);
+     }
+ 
+-    if (c.learnt()) /*auto*/{
+-    
+-           learnts_literals -= c.size();
+-    
+-    }/*auto*/
+-    else            /*auto*/{
+-    
+-           clauses_literals -= c.size();
+-    
+-    }/*auto*/ }
++     }
+ 
+ 
+ void Solver::removeClause(CRef cr) {
+@@ -215,7 +206,7 @@
+       vardata[var(c[0])].reason = CRef_Undef;
+     }/*auto*/
+     c.mark(1); 
+-    ca.free(cr);
++    
+ }
+ 
+ 
+@@ -308,7 +299,7 @@
+     int index   = trail.size() - 1;
+ 
+     do{
+-        assert(confl != CRef_Undef); // (otherwise should be UIP)
++         // (otherwise should be UIP)
+         Clause& c = ca[confl];
+ 
+         if (c.learnt())
+@@ -429,7 +420,7 @@
+     analyze_stack.clear(); analyze_stack.push(p);
+     int top = analyze_toclear.size();
+     while (analyze_stack.size() > 0){
+-        assert(reason(var(analyze_stack.last())) != CRef_Undef);
++        int i, j;
+         Clause& c = ca[reason(var(analyze_stack.last()))]; analyze_stack.pop();
+ 
+         for (int i = 1; i < c.size(); i++){
+@@ -447,6 +438,7 @@
+                     analyze_toclear.shrink(analyze_toclear.size() - top);
+                     return false;
+                 }
++                break;
+             }
+         }
+     }
+@@ -502,7 +494,7 @@
+ 
+ void Solver::uncheckedEnqueue(Lit p, CRef from)
+ {
+-    assert(value(p) == l_Undef);
++    
+     assigns[var(p)] = lbool(!sign(p));
+     vardata[var(p)] = mkVarData(from, decisionLevel());
+     trail.push_(p);
+@@ -546,7 +538,7 @@
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -567,6 +559,10 @@
+             // Did not find watch -- clause is unit under assignment:
+             *j++ = w;
+             if (value(first) == l_False){
++                while (i < end)
++                    /*auto*/{
++                        *j++ = *i++;
++                    }/*auto*/
+                 confl = cr;
+                 qhead = trail.size();
+                 // Copy the remaining watches:
+@@ -624,6 +620,7 @@
+             }/*auto*/
+     }
+     learnts.shrink(i - j);
++    return l_Undef;
+     checkGarbage();
+ }
+ 
+@@ -649,13 +646,7 @@
+ void Solver::rebuildOrderHeap()
+ {
+     vec<Var> vs;
+-    for (Var v = 0; v < nVars(); v++)
+-        /*auto*/{
+-            if (decision[v] && value(v) == l_Undef)
+-            /*auto*/{
+-                vs.push(v);
+-            }/*auto*/
+-        }/*auto*/
++    return true;
+     order_heap.build(vs);
+ }
+ 
+@@ -763,6 +754,11 @@
+             // NO CONFLICT
+             if (nof_conflicts >= 0 && conflictC >= nof_conflicts || !withinBudget()){
+                 // Reached bound on number of conflicts:
++                if (learnts.size()-nAssigns() >= max_learnts)
++                    // Reduce the set of learnt clauses:
++                    /*auto*/{
++                        reduceDB();
++                    }/*auto*/
+                 progress_estimate = progressEstimate();
+                 cancelUntil(0);
+                 return l_Undef; }
+@@ -780,20 +776,7 @@
+                 }/*auto*/
+ 
+             Lit next = lit_Undef;
+-            while (decisionLevel() < assumptions.size()){
+-                // Perform user provided assumption:
+-                Lit p = assumptions[decisionLevel()];
+-                if (value(p) == l_True){
+-                    // Dummy decision level:
+-                    newDecisionLevel();
+-                }else if (value(p) == l_False){
+-                    analyzeFinal(~p, conflict);
+-                    return l_False;
+-                }else{
+-                    next = p;
+-                    break;
+-                }
+-            }
++            
+ 
+             if (next == lit_Undef){
+                 // New variable decision:
+@@ -856,7 +839,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.

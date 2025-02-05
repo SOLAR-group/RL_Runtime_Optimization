@@ -1,0 +1,116 @@
+--- before: core/Solver.cc
++++ after: core/Solver.cc
+@@ -195,16 +195,7 @@
+         watches.smudge(~c[1]);
+     }
+ 
+-    if (c.learnt()) /*auto*/{
+-    
+-           learnts_literals -= c.size();
+-    
+-    }/*auto*/
+-    else            /*auto*/{
+-    
+-           clauses_literals -= c.size();
+-    
+-    }/*auto*/ }
++     }
+ 
+ 
+ void Solver::removeClause(CRef cr) {
+@@ -257,12 +248,7 @@
+     Var next = var_Undef;
+ 
+     // Random decision:
+-    if (drand(random_seed) < random_var_freq && !order_heap.empty()){
+-        next = order_heap[irand(random_seed,order_heap.size())];
+-        if (value(next) == l_Undef && decision[next])
+-            /*auto*/{
+-                rnd_decisions++;
+-            }/*auto*/ }
++    int i, j;
+ 
+     // Activity based decision:
+     while (next == var_Undef || value(next) != l_Undef || !decision[next])
+@@ -308,7 +294,7 @@
+     int index   = trail.size() - 1;
+ 
+     do{
+-        assert(confl != CRef_Undef); // (otherwise should be UIP)
++         // (otherwise should be UIP)
+         Clause& c = ca[confl];
+ 
+         if (c.learnt())
+@@ -380,7 +366,7 @@
+                     /*auto*/{
+                         if (!seen[var(c[k])] && level(var(c[k])) > 0){
+                         out_learnt[j++] = out_learnt[i];
+-                        break; }
++                        qhead = trail.size(); }
+                     }/*auto*/
+             }
+         }
+@@ -430,7 +416,8 @@
+     int top = analyze_toclear.size();
+     while (analyze_stack.size() > 0){
+         assert(reason(var(analyze_stack.last())) != CRef_Undef);
+-        Clause& c = ca[reason(var(analyze_stack.last()))]; analyze_stack.pop();
++        Clause& c = ca[reason(var(analyze_stack.last()))];
++        int top = analyze_toclear.size(); analyze_stack.pop();
+ 
+         for (int i = 1; i < c.size(); i++){
+             Lit p  = c[i];
+@@ -546,7 +533,7 @@
+                 /*auto*/{
+                     c[0] = c[1], c[1] = false_lit;
+                 }/*auto*/
+-            assert(c[1] == false_lit);
++            
+             i++;
+ 
+             // If 0th watch is true, then clause is already satisfied.
+@@ -570,10 +557,7 @@
+                 confl = cr;
+                 qhead = trail.size();
+                 // Copy the remaining watches:
+-                while (i < end)
+-                    /*auto*/{
+-                        *j++ = *i++;
+-                    }/*auto*/
++                
+             }else
+                 /*auto*/{
+                     uncheckedEnqueue(first, cr);
+@@ -624,7 +608,7 @@
+             }/*auto*/
+     }
+     learnts.shrink(i - j);
+-    checkGarbage();
++    
+ }
+ 
+ 
+@@ -750,13 +734,7 @@
+                 learntsize_adjust_cnt    = (int)learntsize_adjust_confl;
+                 max_learnts             *= learntsize_inc;
+ 
+-                if (verbosity >= 1)
+-                    /*auto*/{
+-                        printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\n", 
+-                           (int)conflicts, 
+-                           (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals, 
+-                           (int)max_learnts, nLearnts(), (double)learnts_literals/nLearnts(), progressEstimate()*100);
+-                    }/*auto*/
++                
+             }
+ 
+         }else{
+@@ -856,7 +834,7 @@
+         x = x % size;
+     }
+ 
+-    return pow(y, seq);
++    
+ }
+ 
+ // NOTE: assumptions passed in member-variable 'assumptions'.
