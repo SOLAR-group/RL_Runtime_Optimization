@@ -1,0 +1,17 @@
+_magpie*
+
+# Compiled python modules.
+*.pyc
+
+# Setuptools distribution folder.
+/dist/
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
+experiments/results_*
+.venv/*
+experiments/results*
+experiments/generate_coverage/minisat
+experiments/generate_coverage/coverage_data/
+experiments/generate_coverage/logs.txt
+*.DS_Store
